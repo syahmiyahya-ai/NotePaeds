@@ -1,0 +1,14 @@
+{
+  "name": "notepaeds-tauri",
+  "private": true,
+  "version": "9.3.3",
+  "description": "NotePaeds 9.3.3 Notepad-style Windows desktop application",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.8.0"
+  }
+}

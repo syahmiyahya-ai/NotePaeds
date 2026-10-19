@@ -1,0 +1,54 @@
+async (page) => {
+  const failures=[],passed=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const check=(ok,name)=>{if(!ok)failures.push(name);else passed.push(name)};
+  await page.evaluate(()=>{localStorage.clear();localStorage.setItem('notepaeds-v8-notepad-shell-prefs',JSON.stringify({moduleAutoCheck:false}))});
+  await page.reload();await page.waitForFunction(()=>!!window.qa);
+  const unit=await page.evaluate(()=>{
+    const q=window.qa,results=[];const ok=(b,s)=>results.push([!!b,s]);const v={route:'Sy',name:'Amoxicillin',amount:'40',unit:'mg',basis:'dose',frequency:'TDS',weight:'10',dosesPerDay:'',maxSingle:'',maxDaily:''};
+    ok(q.regimenOrder('Amoxicillin',v)==='Sy Amoxicillin 40mg/kg (400mg) TDS','compact dose');
+    ok(q.regimenOrder('Amoxicillin',{...v,weight:''})==='Sy Amoxicillin 40mg/kg TDS','missing weight omits total');
+    ok(q.regimenOrder('Amoxicillin',{...v,basis:'day',dosesPerDay:'3'}).includes('40mg/kg/day (133.333mg)'),'daily basis preserved');
+    ok(q.calculatedRegimen({...v,maxDaily:'900',dosesPerDay:'3'}).total===300,'optional daily cap');
+    ok(q.calculatedRegimen({...v,maxSingle:'250'}).total===250,'optional single cap');
+    let rejected=false;try{q.calculatedRegimen({...v,basis:'day'})}catch{rejected=true}ok(rejected,'daily basis requires explicit count');
+    const a={medId:'example',start:0,text:'Sy Amoxicillin 30mg/kg (400mg) TDS',regimen:v};
+    ok(q.inlineMismatch(a)?.text==='Sy Amoxicillin 30mg/kg (300mg) TDS','manual mismatch recalculation');
+    ok(q.inlineMismatch(a)?.message.includes('30mg/kg × 10kg = 300mg'),'tooltip arithmetic');
+    ok(!q.inlineMismatch({...a,regimen:{...v,weight:''}}),'unknown weight not a warning');
+    ok(!q.inlineMismatch({...a,text:'Sy Amoxicillin 40mg/kg (250mg; maximum applied) TDS',regimen:{...v,maxSingle:'250'}}),'explicit cap not a mismatch');
+    ok(!q.inlineMismatch({...a,text:'ordinary note'}),'ambiguous text never inferred');
+    const fluid={medId:'__fluid__',start:0,text:'IV fluids Example 100 mL at 60 mL/hour over 2 hours',fluidInput:{}};
+    ok(q.inlineMismatch(fluid)?.text==='IV fluids Example 100 mL at 50 mL/hour over 2 hours','fluid mismatch arithmetic');
+    const p=q.active();p.text='Before\n'+a.text+'\nAfter';p.medicationAnchors=[{...a,start:7}];q.rememberMedicationAnchors(p);
+    p.text='prefix '+p.text;q.syncMedicationAnchors(p);ok(p.medicationAnchors[0]?.start===14,'anchor moves with preceding insertion');
+    p.text=p.text.replace('30mg','35mg');q.syncMedicationAnchors(p);ok(p.medicationAnchors[0]?.text.includes('35mg'),'anchor survives overlap');
+    p.text=p.text.replace('35mg','30mg');q.syncMedicationAnchors(p);ok(p.medicationAnchors[0]?.text===a.text,'anchor restored on undo text');
+    const backup=JSON.parse(q.shiftBackup());ok(q.cleanAnchors(backup.patients[0]).length===1,'backup preserves valid anchors');
+    ok(q.cleanAnchors({...backup.patients[0],medicationAnchors:[{...a,start:-1}]}).length===0,'invalid imported anchor rejected');
+    p.text='';q.syncMedicationAnchors(p);ok(p.medicationAnchors.length===0,'deletion removes anchors');q.render();return results;
+  });unit.forEach(([ok,name])=>check(ok,name));
+  const editor=page.locator('#editor');
+  await editor.fill('CRT > 2s\nSpO2 > 95%\nRight> Left\nhttps://test\nabc;;x\n>> <<');check(await page.locator('#inlinePanel').isHidden(),'ordinary punctuation does not trigger');
+  await editor.fill('prefix //');check(await page.locator('#inlinePanel').isVisible(),'snippet trigger after whitespace');await editor.press('Escape');check(await editor.inputValue()==='prefix //','escape retains trigger');
+  await editor.fill('//');await editor.press('ArrowDown');await editor.press('ArrowUp');const selected=await page.evaluate(()=>qa.allSnips()[0].text);await editor.press('Enter');check(await editor.inputValue()===selected,'snippet replaces only trigger');
+  await editor.fill('Weight: 10 kg\n;;Amoxicillin');await page.getByRole('option',{name:/^Syr Amoxicillin/}).first().click();
+  check(await page.locator('#inlineApply').isVisible(),'medication opens inline row');
+  await page.getByRole('textbox',{name:'Formulation/route',exact:true}).fill('Sy');await page.getByRole('textbox',{name:'Medicine',exact:true}).fill('Amoxicillin');await page.getByRole('textbox',{name:'Dose',exact:true}).fill('40');await page.getByRole('textbox',{name:'Frequency',exact:true}).fill('TDS');
+  // Hidden optional fields are set through the UI after expanding details.
+  await page.getByRole('textbox',{name:'Units',exact:true}).fill('mg');await page.getByRole('combobox',{name:'Dose basis',exact:true}).selectOption('dose');
+  await page.locator('#inlinePanel summary').filter({hasText:'More details'}).click();await page.locator('[data-field=maxSingle]').fill('');await page.locator('[data-field=maxDaily]').fill('');
+  await page.getByRole('button',{name:'Apply',exact:true}).click();check(await editor.inputValue()==='Weight: 10 kg\nSy Amoxicillin 40mg/kg (400mg) TDS','inline apply exact compact text');
+  await editor.fill('Weight: 10 kg\nSy Amoxicillin 30mg/kg (400mg) TDS');await page.waitForTimeout(950);
+  check(await page.locator('.mismatch').count()===1,'manual edit is red');check(await page.locator('#inlinePanel').innerText().then(t=>t.includes('300mg')),'idle prompt explains mismatch');
+  await page.getByRole('button',{name:'Patient only',exact:true}).click();check(await page.locator('.mismatch').count()===1,'patient only preserves warning');
+  await editor.focus();await editor.press('Alt+Enter');check(await page.locator('#inlineApply').isVisible(),'Alt Enter opens tracked edit');await page.getByRole('button',{name:'Apply',exact:true}).click();check((await editor.inputValue()).includes('30mg/kg (300mg)'),'inline edit recalculates');check(await page.locator('.mismatch').count()===0,'corrected mismatch clears red');
+  await editor.focus();await editor.press('Alt+Enter');await page.getByRole('textbox',{name:'Weight (kg)',exact:true}).fill('');await page.getByRole('button',{name:'Apply',exact:true}).click();check((await editor.inputValue()).includes('Sy Amoxicillin 30mg/kg TDS'),'cleared weight omits parentheses');
+  await editor.fill(';;iv fluids');await editor.press('Enter');await page.getByRole('textbox',{name:'Fluid',exact:true}).fill('Example fluid');await page.getByRole('textbox',{name:'Volume (mL)',exact:true}).fill('100');await page.getByRole('textbox',{name:'Rate (mL/hour)',exact:true}).fill('50');await page.getByRole('textbox',{name:'Duration (hours)',exact:true}).fill('2');await page.getByRole('button',{name:'Apply',exact:true}).click();check(await editor.inputValue()==='IV fluids Example fluid 100 mL at 50 mL/hour over 2 hours','fluid linear insertion');
+  await editor.fill('IV fluids Example fluid 100 mL at 60 mL/hour over 2 hours');await page.waitForTimeout(950);await page.getByRole('button',{name:'Recalculate',exact:true}).click();check((await editor.inputValue()).includes('50 mL/hour'),'fluid recalculation action');
+  await editor.fill('before ##calculator');await editor.press('Enter');await page.locator('#calcExpression').fill('2+3');await page.getByRole('button',{name:'Insert result',exact:true}).click();check(await editor.inputValue()==='before 5','calculator replaces trigger at original location');
+  await editor.fill('##calculator');await editor.press('Enter');await page.keyboard.press('Escape');check(await editor.inputValue()==='##calculator','scoring cancellation retains trigger');
+  await editor.fill(';;amoxicillin');await editor.press('Enter');await page.keyboard.press('Escape');check(await editor.inputValue()===';;amoxicillin','medication cancellation retains trigger');
+  await editor.fill(';;amoxicillin');await editor.press('Enter');await page.locator('#newTab').click();check(await page.locator('#inlinePanel').isHidden()&&await editor.inputValue()==='','patient switch cancels inline edit');
+  await page.screenshot({path:'output/playwright/notepaeds-921-smoke.png'});
+  if(failures.length||errors.length)throw Error([...failures,...errors].join('; '));await page.evaluate(r=>window.__verification921=r,{passed:passed.length,checks:passed});
+}

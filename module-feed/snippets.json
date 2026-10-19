@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "moduleVersion": "1.0.0",
+  "kind": "snippets",
+  "entries": [
+    {
+      "id": "blank",
+      "group": "Clerking starters",
+      "title": "Blank clerking",
+      "desc": "Five-section blank note",
+      "text": "HISTORY\n\n\nEXAMINATION\n\n\nIMPRESSION\n\n\nPLAN\n\n\nREASSESSMENT\n"
+    },
+    {
+      "id": "resp",
+      "group": "Clerking starters",
+      "title": "Respiratory",
+      "desc": "Free-text respiratory starter",
+      "text": "HISTORY\nCough:\nFever:\nRunny nose:\nBreathing difficulty:\nFeeding / oral intake:\nRelevant negatives:\n\nEXAMINATION\nT:    HR:    RR:    SpO2:\nGeneral:\nWork of breathing:\nAir entry / lung sounds:\nHydration:\n\nIMPRESSION\n\nPLAN\n\nREASSESSMENT\n"
+    },
+    {
+      "id": "age",
+      "group": "Clerking starters",
+      "title": "Vomiting / AGE",
+      "desc": "Vomiting and hydration starter",
+      "text": "HISTORY\nVomiting:\nCharacter / last episode:\nDiarrhoea:\nAbdominal pain:\nOral intake:\nUrine output:\nRelevant negatives:\n\nEXAMINATION\nT:    HR:    RR:    SpO2:\nGeneral / hydration:\nPerfusion:\nAbdomen:\nDXT (if checked):\n\nIMPRESSION\n\nPLAN\n\nREASSESSMENT\nOral challenge:\n"
+    },
+    {
+      "id": "trauma",
+      "group": "Structural snippets",
+      "title": "Trauma clerking",
+      "desc": "Generic paediatric trauma clerking — verify every line",
+      "text": "== ED TRAUMA CLERKING ==\n\nP/W:\n\nAlleged _ trauma at around _ on _.\n\nMECHANISM OF INJURY:\n\nDate / time of incident: _\nPlace of incident: _\nMechanism: _\nWitnessed / unwitnessed: _\nEstimated height / speed / force: _\nObject involved: _\nSite of impact: _\nProtective equipment used: _\nChild’s account: _\nWitness’s account: _\n\nPOST-INCIDENT:\n\nOtherwise,\nno trauma to head\nno LOC / RA\nno ENT Bleed\nno headache\nno nausea / vomiting\nno dizziness\nno blurring of vision\nno abdominal pain\nno fever\nactive as usual\ntolerating orally\n\nPrimary survey:\nNo castotrophic haemorrhage\n\nA: Airway patent, speaking in full sentences, no stridor/guargling sound\n\nB: Good breathing effort, equal chest expansion, no wounds seen, no crepitus, Lungs: Clear, equal a/e\n\nC: Pink, Warm peripheries, CRT<2sec, Good pulse volume, No sunken eyes, normal skin turgor, moist mucosa, CVS: DRNM, PA soft, non tender, not distended\n\nD: GCS Full, Pupils 3/3 reactive, no neurological deficit\n\nE: no spinal tenderness, no step deformities, T 36.5\n\nSecondary Survey (Head to toe) :\n\nHead:\nNo bone deformity/crepitation/active bleeding/swelling/hematoma/ bogginess\n\nNeck: No cervical tenderness, Neck ROM Full, no crepitus\n\nChest: No deformity/crepitation/active bleeding/swelling/hematoma, Good breathing effort, equal chest expansion.\n\nAbdomen: Soft, non tender, no guarding, No active bleeding/swelling/hematoma.\n\nBilateral Upper Limb :\nNo deformity/crepitation/active bleeding/swelling/hematoma, ROM Of shoulder, elbow and wrist full, Good pulse volume, Warm peripheries, CRT<2sec, Able to move all fingers.\n\nRight Lower Limb :\nNo deformity/crepitation/active bleeding/swelling/hematoma, ROM of hip, knee and ankle full, Good pulse volume, Warm peripheries, CRT<2sec, Able to move all toes\n\nLeft Lower Limb :\n\n- ROM Hip & Knee Full\n- Left Ankle grossly swollen\n- ROM Left ankle limited due to pain\n- Tenderness over left lateral malleolus region\n- No open wounds seen\n- No crepitus felt\n\n* Bruising over left lateral aspect of foot\n\n- DPA/PTA palpable\n- CRT <2sec over all toes\n- Able to move all toes\n- Sensation intact\n\nIMPRESSION:\n\n1. Alleged _ trauma\n2. _\n3. _\n\nPLAN:\n\n1. Analgesia PRN\n2. Wound care: _\n3. Tetanus prophylaxis: _\n4. Trial oral feeding\n5. Investigations / imaging: _\n6. Observe in ED\n7. Monitor for bleeding, swelling or respiratory distress\n8. Neurological observation while in ED\n9. Referral / discussion with: _\n10. KIV discharge if remains well and tolerating orally\n11. Follow-up: _\n12. Safeguarding plan, if applicable: _\n\nCAREGIVER ADVISED TO RETURN STAT IF:\n\n- Active or persistent bleeding\n- Increasing swelling\n- Increasing pain\n- Dysphagia or odynophagia\n- Drooling\n- Noisy breathing or shortness of breath\n- Persistent vomiting\n- Severe or worsening headache\n- Drowsiness or altered behaviour\n- Seizure\n- Facial asymmetry\n- Limb weakness or numbness\n- Speech disturbance\n- Unsteady gait\n- Poor oral intake\n- Any other worrying symptom\n-\n"
+    },
+    {
+      "id": "fever",
+      "group": "Clerking starters",
+      "title": "Fever / URTI",
+      "desc": "Fever and localising symptoms",
+      "text": "HISTORY\nDay of fever:\nHighest measured temperature:\nActivity:\nOral intake / urine output:\nAssociated / localising symptoms:\nRelevant negatives:\n\nEXAMINATION\nT:    HR:    RR:    SpO2:\nGeneral / hydration / perfusion:\nENT:\nRespiratory:\nAbdomen:\nSkin / rash:\n\nIMPRESSION\n\nPLAN\n\nREASSESSMENT\n"
+    },
+    {
+      "id": "pm_review",
+      "group": "Structural snippets",
+      "title": "PM Review",
+      "desc": "PM review structure",
+      "text": "== PM REVIEW ==\n\n<Patient ID>\n\nIssue:\n1. \nP/W -\nO/E -\nIx - \n\nGiven,\n\n\nProgress,\nSaturating under RA \n\nO/E: Alert, active and pink. \nWell perfused, CRT <2 sec.\nNot tachypnoea or recession.\n\nLungs: Equal air entry bilaterally.\nHeart sounds normal, no murmur.\nAbdomen soft, non-distended and non-tender.\nNo focal neurological deficit noted.\n\nPLAN:\nIX - \n\n(A+B)\n\n(C)\nhydration\n\nMeds\n\n(D) Detoriation/Disposition\n"
+    },
+    {
+      "id": "investigation",
+      "group": "Structural snippets",
+      "title": "Investigation",
+      "desc": "FBC, RP, LFT, CRP, electrolytes, VBG and urine",
+      "text": "FBC- HB:   WBC:   PLT:   HCT: \nRP-  Na:   K:    Ur:    Cr:   \nLFT - ALT:    AST:    ALP:    T.BIli:  \nCRP- \nCa:  Mg:  PO4:\nVBG- PH:   PCO2:   PO2:   HCO3:   BE:    Lactate:   \nURINE - BLD :  LEU :   PROT :   NIT :   KET :   DXT :"
+    },
+    {
+      "id": "efast",
+      "group": "Structural snippets",
+      "title": "eFAST",
+      "desc": "eFAST findings",
+      "text": "== eFAST ==\n\nno collection in Morrison pouch \nno free fluid seen in splenorenal reccess \nno free fluid in pouch of douglass / rectovesical reccesss\n\nNo Pericardial fluid\nPleural fluid not seen:  Right _ / Left _\nLung sliding present: Right _ / Left _"
+    },
+    {
+      "id": "ed_clerking",
+      "group": "Structural snippets",
+      "title": "ED Clerking",
+      "desc": "Complete ED clerking structure",
+      "text": "== ED CLERKING ==\n\n<insert Patiend ID here>\n\nNKMI / NKDA\nImmunisation: Up to age\nUnderlying:\n\n\n\n\n___________________________________________\n\nReferred from:\n\nP/W :\n\n\n\n\n\n\n\nOtherwise,\nno fever\nno cough\nno runny nose\nno sore throat\nno noisy breathing\nno rapid breathing\nno chest pain\nno abdominal pain\nno vomiting\nno diarrhoea\nno constipation\nno abdominal distension\nno urinary symptoms\nno reduced urine output\nno seizure\nno altered behaviour\nno lethargy\nno meningism\nno rashes\nno bleeding tendency\nno trauma\nno recent travel\nno sick contact\n\n\n\nactive as usual\ntolerating orally\nPU/BO normal\n\n\n\n\nO/E:\nAlert, active, comfortable\nPink, not cyanosed\nGood pulse volume, CRT <2s\nWarm peripheries, Moist mucosa\nClinically well hydrated\nNot in respiratory distress\n\nTongue not coated\nNormal skin turgor\nNo sunken eyes\n\nNo nasal flaring\nNo grunting\nNo tracheal tug\nNo head bobbing\nNo recession\n\nVitals:\n<insert Vital sign here>\n\n\n\nLungs: Equal A/E , No crepitations, No rhonchi, No wheeze\nCVS: DRNM\nPA: Soft, Not distended, No guarding\n\n\nImp:\n1. \n\n\nPlan:\nIX - \n\n(A+B)\n\n(C)\nhydration\n\nMeds\n\n\n(D)\n\n\n\n- Allow discharge if clinically well\n- Explain diagnosis to caregiver\n- KK / Clinic follow up if required\n- TCA to ED STAT if: \npersistent fever, reduced oral intake, reduced urine output, persistent vomiting, respiratory distress, excessive lethargy, seizure, worsening symptoms\n"
+    },
+    {
+      "id": "normal_exam",
+      "group": "Common notes",
+      "title": "Normal examination",
+      "desc": "Verify every statement",
+      "text": "O/E:\nAlert, active, comfortable\nPink, not cyanosed\nGood pulse volume, CRT <2s\nWarm peripheries, Moist mucosa\nClinically well hydrated\nNot in respiratory distress\n\nTongue not coated\nNormal skin turgor\nNo sunken eyes\n\nNo nasal flaring\nNo grunting\nNo tracheal tug\nNo head bobbing\nNo recession\n\nVitals:\n<insert Vital sign here>\n\n\n\nLungs: Equal A/E , No crepitations, No rhonchi, No wheeze\nCVS: DRNM\nPA: Soft, Not distended, No guarding\n"
+    },
+    {
+      "id": "reassess",
+      "group": "Common notes",
+      "title": "Normal assessment",
+      "desc": "Progress and normal reassessment",
+      "text": "== REASSESSMENT @  ==\n\n<Patient ID>\n\n\nIssue : \n\n\n\nProgress,\nSaturating under RA \nNo vomiting \nNo diarrhea\nNo other acute complaints \n\nOn examination\nAlert, active and pink. \nWell perfused, CRT <2 sec.\n\nNot tachypnoea or recession.\nLungs: Equal air entry bilaterally.\nHeart sounds normal, no murmur.\nAbdomen soft, non-distended and non-tender.\nNo focal neurological deficit noted.\n\n\n\nplan :\n"
+    },
+    {
+      "id": "resp_reassess",
+      "group": "Common notes",
+      "title": "Respiratory reassessment",
+      "desc": "Serial treatment response and respiratory scoring",
+      "text": "== Respiratory Reassessment @ _ ==\n\nPatient ID:\n\nImportant underlying:\n_\n____________________________________________\n\nIssue:\nInitial respiratory score: _\nOxygen/support: _\n\n\n1----> Given __ Completed @ _\nResponse:\nGeneral: _ | Speaking/feeding: _\nHR _ | RR _ | SpO₂ _% under _\nEffort: _ | Air entry: _ | Added sounds: _\nScore: _ → _ | Improved / Unchanged / Worsened\n\n2----> Given __ Completed @ _\nResponse:\nGeneral: _ | Speaking/feeding: _\nHR _ | RR _ | SpO₂ _% under _\nEffort: _ | Air entry: _ | Added sounds: _\nScore: _ → _ | Improved / Unchanged / Worsened\n\n3----> Given __ Completed @ _\nResponse:\nGeneral: _ | Speaking/feeding: _\nHR _ | RR _ | SpO₂ _% under _\nEffort: _ | Air entry: _ | Added sounds: _\nScore: _ → _ | Improved / Unchanged / Worsened\n\n\n\nPlan:\n- Continue: _\n- Next treatment/reassessment: _\n- Escalate if: _\n- D/W Dr _\n"
+    },
+    {
+      "id": "dengue_reassess",
+      "group": "Common notes",
+      "title": "Dengue reassessment",
+      "desc": "Dengue phase, fluids, trends and review plan",
+      "text": "== DENGUE REVIEW ==\n\nPatient ID:\nWeight: _____ kg\n\nISSUE :Dengue Day _____\nPhase: [ Febrile / Critical / Recovery ]\nWarning signs: [ Absent / Present: __________ ]\nShock: [ No / Yes: __________ ]\n\nDEFERVESCENCE:\nLast temperature spike: _____ °C @ __ , Last paracetamol @ __\nAfebrile for:  ___ hours\n\nIV FLUIDS:\n\n1. IV __________ at _____ mL/kg/hour from __________\n2. IV __________ at _____ mL/kg/hour from __________\n3. IV __________ at _____ mL/kg/hour from __________ till now\n\nCURRENTLY:\nVomiting: __________\nAbdominal pain: __________\nBleeding: __________\nOther symptoms: __________\nOral intake: __________\nUrine output: _____ mL/kg/hour; last urine at __________\nActivity: __________\n\nON EXAMINATION:\nGeneral: __________\nPerfusion: Peripheries Warm, CRT <2s, pulse volume Good\nHydration: mucosa moist, toungue not coated, no sunken eyes\nRespiratory: no sign if distress, Lung : clear \nCardiovascular: s1s2\nAbdomen: Soft, not tender, no hepatomegaly, no tender liver\nNo Bleeding, No signd of fluid overloa\n\nSERIAL VITALS:\n@ _____: T _____°C | HR _____ | RR _____ | BP *****/***** (PP _____) | SpO₂ _____% under _____ | CRT _____\n@ _____: T _____°C | HR _____ | RR _____ | BP *****/***** (PP _____) | SpO₂ _____% under _____ | CRT _____\n@ _____: T _____°C | HR _____ | RR _____ | BP *****/***** (PP _____) | SpO₂ _____% under _____ | CRT _____\n\nSERIAL INVESTIGATIONS:\nDate/Time | Hb | HCT | WBC | Platelets | AST | ALT | LCT \n__________ | _____ | _____ | _____ | _____ | _____ | _____ |\n__________ | _____ | _____ | _____ | _____ | _____ | _____ |\n__________ | _____ | _____ | _____ | _____ | _____ | _____ |\n\nIMPRESSION:\nDengue Day _____, __________ phase\n[ Without / With ] warning signs\n[ No shock / Compensated shock / Hypotensive shock ]\nAfebrile for _____ hours\nHCT trend: [ Rising / Static / Falling ]\nOther issue: __________\n\nPLAN:\n• IV fluids: __________\n• Oral fluids: __________\n• Strict input/output monitoring\n• Repeat FBC/HCT at __________\n• Monitor warning signs, bleeding, shock and fluid overload\n• Other plan: __________\n• Next review: __________\n"
+    },
+    {
+      "id": "discharge",
+      "group": "Common notes",
+      "title": "Discharge advice",
+      "desc": "Generic safety-net prompt",
+      "text": "\nDISCHARGE\nCaregiver counselled regarding working diagnosis, home care and red flags.\nReturn immediately for breathing difficulty, poor intake, reduced urine, persistent lethargy, seizure or any worsening concern.\nFollow-up:\nCaregiver verbalised understanding and agrees with plan.\n"
+    },
+    {
+      "id": "sb_dw",
+      "group": "Common notes",
+      "title": "S/B and D/W",
+      "desc": "Sign-off lines",
+      "text": "\nS/B \nD/W \n"
+    },
+    {
+      "id": "pc_runny_nose",
+      "group": "Presenting complaints",
+      "title": "Runny nose",
+      "desc": "Nasal discharge and blockage",
+      "text": "Runny nose x __/7\n\n- clear / yellowish / greenish discharge\n- no nasal blockage"
+    },
+    {
+      "id": "asthma_profile",
+      "group": "Common notes",
+      "title": "Asthma Profile",
+      "desc": "Relevant asthma history, mAPI and asthma control",
+      "text": "Relevant asthma history:\n\n- previous wheezing:\n- previous nebulisation:\n- previous admission:\n- MDI use:\n- night symptoms:\n- exercise-induced symptoms:\n\nmAPI:\nno previous wheezing episodes\nno parents with asthma\nno underlying atopy\nno known allergy to milk, egg, paenuts\n\n\n\nAsthma control -\n\nDaytime symptoms >2\nnocturnal symptoms\nMDI Salbutamol needed weekly\nactivity limitations"
+    },
+    {
+      "id": "pc_fever",
+      "group": "Presenting complaints",
+      "title": "1 · Fever",
+      "desc": "Focused fever history — verify every line",
+      "text": "Fever x __/7\n\n- onset:\n- warm to touch\n- no documented temperature:\n- intermittent / persistent\n- last PCM at:\n- no chills or rigors\n- no prolonged fever\n- no fitting"
+    },
+    {
+      "id": "pc_cough_urti",
+      "group": "Presenting complaints",
+      "title": "2 · Cough",
+      "desc": "Cough, coryza and throat history",
+      "text": "Cough x __/7\n\n- dry / chesty / productive\n- daytime / nocturnal\n- no barking cough\n- no whooping cough\n- no post-tussive vomiting\n- no choking episode"
+    },
+    {
+      "id": "pc_rapid_breathing",
+      "group": "Presenting complaints",
+      "title": "3 · Rapid breathing",
+      "desc": "Breathing symptoms and asthma history",
+      "text": "Rapid breathing x __/7\n\n- onset:\n- persistent / intermittent\n- associated with cough / fever\n- no noisy breathing\n- no apnoea\n- no cyanosis\n- no choking episode\n- no interrupted feeding\n- able to speak / cry normally\n- activity:"
+    },
+    {
+      "id": "pc_vomiting",
+      "group": "Presenting complaints",
+      "title": "4 · Vomiting",
+      "desc": "Vomiting character and hydration history",
+      "text": "Vomiting x __/7\n\n- onset:\n- frequency:\n- last episode:\n- small moderate large amount\n- food milk fluid content\n- non-bilious\n- non-projectile"
+    },
+    {
+      "id": "pc_diarrhoea",
+      "group": "Presenting complaints",
+      "title": "5 · Diarrhoea",
+      "desc": "Stool, vomiting, hydration and exposure",
+      "text": "Loose stool x __/7\n\n- frequency:\n\n- last episode:\n\n- Bristol type:\n\n- small / moderate / large amount\n\n- watery / loose\n\n- no blood\n\n- no mucus\n\n- no outside food\n\n- no sick contact\n\n- no recent travelling\n\n- no recent antibiotics"
+    },
+    {
+      "id": "pc_abdominal_pain",
+      "group": "Presenting complaints",
+      "title": "6 · Abdominal pain",
+      "desc": "Pain analysis and relevant systems",
+      "text": "1. Abdominal pain x __/7\n- onset:\n- site:\n- radiation:\n- intermittent / continuous\n- severity:\n- aggravating factors:\n- relieving factors:\n- relation to meals:\n- wakes child from sleep:\n- able to walk / jump:\n\nOtherwise,\nno vomiting\nno bilious vomiting\nno diarrhoea\nno constipation\nno abdominal distension\nno fever\nno urinary symptoms\nno haematuria\nno groin swelling\nno testicular pain\nno trauma\n\nBO:\nPU:\nLMP if relevant:\n"
+    },
+    {
+      "id": "pc_constipation",
+      "group": "Presenting complaints",
+      "title": "7 · Constipation",
+      "desc": "Bowel pattern, withholding and diet",
+      "text": "No bowel output x __/7\n\n- last BO:\n- stool consistency:\n- Bristol type:\n- painful defecation:\n- straining:\n- dietary fibre / fluid intake:"
+    },
+    {
+      "id": "pc_rash",
+      "group": "Presenting complaints",
+      "title": "8 · Rash",
+      "desc": "Morphology, distribution and exposures",
+      "text": "Rash x __/7\n\n- onset:\n- started over:\n- progression:\n- distribution:\n- itchy / non-itchy\n- blanching / non-blanching\n- macular / papular / vesicular\n- no pain\n- no discharge\n- no mucosal involvement\n- no skin peeling\n\nAssociated:\n\n- fever:\n- cough / runny nose:\n- red eyes:\n- sore throat:\n- new medication:\n- new food / product exposure:\n- sick contact:\n- recent travel:"
+    },
+    {
+      "id": "pc_headache",
+      "group": "Presenting complaints",
+      "title": "9 · Headache",
+      "desc": "Headache features and neurological red flags",
+      "text": "1. Headache x __/7\n- onset:\n- site:\n- severity:\n- gradual / sudden\n- intermittent / persistent\n- morning headache:\n- wakes from sleep:\n- aggravated by coughing:\n- response to analgesia:\n\nOtherwise,\nno vomiting\nno photophobia\nno neck stiffness\nno seizure\nno altered behaviour\nno excessive drowsiness\nno focal weakness\nno blurred vision\nno recent trauma\nno fever\n"
+    },
+    {
+      "id": "pc_seizure",
+      "group": "Presenting complaints",
+      "title": "10 · Seizure",
+      "desc": "Event description and associated fever",
+      "text": "Fitting at __H today\n\n- witnessed by\n- Prior to fitting child was\n- Semiology :\n- generalised / focal\n- tonic / clonic movement:\n- eye deviation:\n- teeth clenching:\n- drooling:\n- urinary incontinence:\n- duration:\n- stopped spontaneously / medication given:\n- post-ictal drowsiness:\n- regained baseline after:\n\nOtherwise,\nno recent trauma\nno toxic ingestion\nno persistent vomiting\nno neck stiffness\nno abnormal behaviour before event"
+    },
+    {
+      "id": "pc_ear_pain",
+      "group": "Presenting complaints",
+      "title": "11 · Ear pain",
+      "desc": "Laterality, otological and URTI symptoms",
+      "text": "1. Ear pain x __/7\n- right / left / bilateral\n- onset:\n- severity:\n- no ear discharge\n- no reduced hearing\n- no tinnitus\n- no foreign body insertion\n- no trauma\n- no swimming / water exposure\n\nAssociated:\n- fever:\n- cough:\n- runny nose:\n- sore throat:\n\nOtherwise,\nno swelling behind ear\nno ear protrusion\nno facial weakness\nno dizziness\nno vomiting\n"
+    },
+    {
+      "id": "pc_eye_redness",
+      "group": "Presenting complaints",
+      "title": "12 · Eye redness / discomfort",
+      "desc": "Eye symptoms, exposures and red flags",
+      "text": "1. Eye redness / discomfort x __/7\n- right / left / bilateral\n- onset:\n- itchy / painful\n- watery / purulent discharge\n- eyelids stuck together\n- no blurred vision\n- no photophobia\n- no foreign body sensation\n- no trauma\n- no chemical exposure\n\nAssociated:\n- fever:\n- cough / runny nose:\n- sick contact:\n- contact lens use:\n- known refractive error:\n\nOtherwise,\nno periorbital swelling\nno painful eye movement\nno proptosis\nno severe headache\nno vomiting\n"
+    },
+    {
+      "id": "pc_urinary",
+      "group": "Presenting complaints",
+      "title": "13 · Urinary symptoms",
+      "desc": "Urinary symptoms and infant-specific prompts",
+      "text": "1. Dysuria x __/7\n2. Frequency x __/7\n3. Urgency x __/7\n4. Fever x __/7\n\n- urine colour:\n- urine smell:\n- urine output:\n- no haematuria\n- no loin pain\n- no suprapubic pain\n- no vomiting\n- no previous UTI\n- no recent antibiotics\n\nInfant-specific:\n- feeding:\n- wet diapers:\n- activity:\n- excessive crying during urination:\n"
+    },
+    {
+      "id": "pc_poor_intake",
+      "group": "Presenting complaints",
+      "title": "14 · Poor oral intake",
+      "desc": "Current intake and hydration history",
+      "text": "Reduced oral intake x __/7\n\n- fluids:\n- breastfeeding:\n- usual intake:\n- current intake:\n- reason: poor appetite / pain / vomiting / respiratory symptoms\n- tolerating normally for solid / fluid\n- able to tolerate small frequent feeds\n\nHydration:\n\n- PU / wet diapers:\n- tears:\n- activity:\n- no sunken eyes noticed\n- no dry mouth\n- no excessive sleepiness"
+    },
+    {
+      "id": "pc_limp",
+      "group": "Presenting complaints",
+      "title": "15 · Limp / limb pain",
+      "desc": "Pain, function, trauma and neurology",
+      "text": "1. Pain over __ x __/7\n- onset:\n- sudden / gradual\n- trauma:\n- swelling:\n- redness:\n- warmth:\n- able to bear weight:\n- able to walk:\n- limitation of movement:\n- nocturnal pain:\n- analgesia given:\n\nOtherwise,\nno fever\nno recent URTI\nno rash\nno other joint involvement\nno weakness\nno numbness\nno bowel or bladder symptoms\n"
+    },
+    {
+      "id": "pc_allergy",
+      "group": "Presenting complaints",
+      "title": "16 · Allergic symptoms",
+      "desc": "Trigger, progression and anaphylaxis prompts",
+      "text": "Rash / itchiness x __/7\n\n- onset after: food / medication / insect sting / unknown\n- distribution:\n- progression:\n- previous similar episode:\n\nOtherwise,\nno facial swelling\nno lip swelling\nno tongue swelling\nno hoarse voice\nno drooling\nno breathing difficulty\nno wheezing\nno vomiting\nno dizziness\nno collapse"
+    },
+    {
+      "id": "pc_sore_throat",
+      "group": "Presenting complaints",
+      "title": "17 · Sore throat",
+      "desc": "Swallowing, airway and associated symptoms",
+      "text": "Sore throat x __/7\n\n- no painful swallowing\n- no drooling\n- no muffled voice\n- tolerating orally"
+    },
+    {
+      "id": "pc_infant_crying",
+      "group": "Presenting complaints",
+      "title": "18 · Infant crying / irritability",
+      "desc": "Crying pattern, associated symptoms and outputs",
+      "text": "1. Excessive crying x __/7\n- onset:\n- intermittent / persistent\n- consolable / inconsolable\n- high-pitched cry:\n- relation to feeding:\n- relation to urination / defecation:\n- sleep:\n- activity between episodes:\n\nOtherwise,\nno fever\nno vomiting\nno abdominal distension\nno diarrhoea\nno constipation\nno reduced urine output\nno rash\nno trauma\nno seizure\nno limb swelling\n\nFeeding:\nPU / wet diapers:\nBO:\n"
+    }
+  ]
+}

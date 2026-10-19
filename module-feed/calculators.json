@@ -1,0 +1,802 @@
+{
+  "schemaVersion": 1,
+  "moduleVersion": "1.2.0",
+  "kind": "calculators",
+  "entries": [
+    {
+      "id": "arithmetic",
+      "kind": "arithmetic",
+      "title": "Calculator",
+      "enabled": true
+    },
+    {
+      "id": "pas",
+      "kind": "score",
+      "title": "Paediatric Asthma Score (PAS)",
+      "label": "PAS",
+      "enabled": true,
+      "note": "Supplied PAS table. Age 4 overlaps in the 2–4 and 4–5 year bands: select the applicable band explicitly. No respiratory-rate band supplied outside these ages. Select assessed findings only; use the more severe side if asymmetric.",
+      "source": "User-supplied PAS reference",
+      "contexts": [
+        {
+          "id": "ageBand",
+          "label": "Respiratory-rate age band",
+          "options": [
+            "2–4 years",
+            "4–5 years",
+            "6–12 years"
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "id": "rr",
+          "label": "Respiratory rate (breaths/min)",
+          "context": "ageBand",
+          "variants": {
+            "2–4 years": [
+              {
+                "label": "≤34",
+                "score": 1
+              },
+              {
+                "label": "35–39",
+                "score": 2
+              },
+              {
+                "label": "≥40",
+                "score": 3
+              }
+            ],
+            "4–5 years": [
+              {
+                "label": "≤30",
+                "score": 1
+              },
+              {
+                "label": "31–35",
+                "score": 2
+              },
+              {
+                "label": "≥36",
+                "score": 3
+              }
+            ],
+            "6–12 years": [
+              {
+                "label": "≤26",
+                "score": 1
+              },
+              {
+                "label": "27–30",
+                "score": 2
+              },
+              {
+                "label": "≥31",
+                "score": 3
+              }
+            ]
+          }
+        },
+        {
+          "id": "oxygen",
+          "label": "Oxygen saturation",
+          "options": [
+            {
+              "label": ">95% on room air",
+              "score": 1
+            },
+            {
+              "label": "90–95% on room air",
+              "score": 2
+            },
+            {
+              "label": "<90% on room air OR supplemental oxygen",
+              "score": 3
+            }
+          ]
+        },
+        {
+          "id": "breath",
+          "label": "Breath sounds",
+          "options": [
+            {
+              "label": "Normal breathing or end-expiratory wheeze",
+              "score": 1
+            },
+            {
+              "label": "Expiratory wheeze",
+              "score": 2
+            },
+            {
+              "label": "Inspiratory and expiratory wheeze, reduced breath sounds, or both",
+              "score": 3
+            }
+          ]
+        },
+        {
+          "id": "retractions",
+          "label": "Retractions",
+          "options": [
+            {
+              "label": "None or intercostal",
+              "score": 1
+            },
+            {
+              "label": "Intercostal and substernal",
+              "score": 2
+            },
+            {
+              "label": "Intercostal, substernal and supraclavicular",
+              "score": 3
+            }
+          ]
+        },
+        {
+          "id": "dyspnoea",
+          "label": "Dyspnoea",
+          "options": [
+            {
+              "label": "Speaks in sentences",
+              "score": 1
+            },
+            {
+              "label": "Partial sentences or short cries",
+              "score": 2
+            },
+            {
+              "label": "Single words, short phrases or grunts",
+              "score": 3
+            }
+          ]
+        }
+      ],
+      "severity": [
+        {
+          "min": 5,
+          "max": 7,
+          "label": "Mild"
+        },
+        {
+          "min": 8,
+          "max": 11,
+          "label": "Moderate"
+        },
+        {
+          "min": 12,
+          "max": 15,
+          "label": "Severe"
+        }
+      ]
+    },
+    {
+      "id": "pram",
+      "kind": "score",
+      "title": "Paediatric Respiratory Assessment Measure (PRAM)",
+      "label": "PRAM",
+      "enabled": true,
+      "note": "Complete all five assessed components. Oxygen saturation uses a room-air assessment; do not assume room air or interrupt needed oxygen just to obtain a score. With asymmetric air entry, use the worst-affected lung field. For asymmetric wheeze, use the two worst auscultation zones. A silent chest with minimal/no air entry scores 3 for wheeze, not 0.",
+      "source": "Canadian Paediatric Society — Managing an acute asthma exacerbation in children, Table 1 (2021); checked 10 September 2026.",
+      "sourceUrl": "https://cps.ca/documents/position/managing-an-acute-asthma-exacerbation",
+      "contexts": [],
+      "fields": [
+        {
+          "id": "oxygen",
+          "label": "Oxygen saturation (room air)",
+          "options": [
+            {
+              "label": "95% or above",
+              "score": 0
+            },
+            {
+              "label": "92–94%",
+              "score": 1
+            },
+            {
+              "label": "Below 92%",
+              "score": 2
+            }
+          ]
+        },
+        {
+          "id": "suprasternal",
+          "label": "Suprasternal retraction",
+          "options": [
+            {
+              "label": "Not present",
+              "score": 0
+            },
+            {
+              "label": "Present",
+              "score": 2
+            }
+          ]
+        },
+        {
+          "id": "scalene",
+          "label": "Scalene muscle contraction",
+          "options": [
+            {
+              "label": "Not present",
+              "score": 0
+            },
+            {
+              "label": "Present",
+              "score": 2
+            }
+          ]
+        },
+        {
+          "id": "air",
+          "label": "Air entry",
+          "options": [
+            {
+              "label": "Normal",
+              "score": 0
+            },
+            {
+              "label": "Reduced at bases",
+              "score": 1
+            },
+            {
+              "label": "Reduced at both apices and bases",
+              "score": 2
+            },
+            {
+              "label": "Minimal or absent",
+              "score": 3
+            }
+          ]
+        },
+        {
+          "id": "wheeze",
+          "label": "Wheeze",
+          "options": [
+            {
+              "label": "No wheeze (not a silent chest)",
+              "score": 0
+            },
+            {
+              "label": "On expiration only",
+              "score": 1
+            },
+            {
+              "label": "On inspiration, with or without expiratory wheeze",
+              "score": 2
+            },
+            {
+              "label": "Audible without a stethoscope, OR silent chest with minimal/no air entry",
+              "score": 3
+            }
+          ]
+        }
+      ],
+      "severity": [
+        {
+          "min": 0,
+          "max": 3,
+          "label": "Mild"
+        },
+        {
+          "min": 4,
+          "max": 7,
+          "label": "Moderate"
+        },
+        {
+          "min": 8,
+          "max": 12,
+          "label": "Severe"
+        }
+      ]
+    },
+    {
+      "id": "westley_croup",
+      "kind": "score",
+      "title": "Westley Croup Score",
+      "label": "WESTLEY CROUP",
+      "enabled": true,
+      "note": "Assess the settled child with minimal handling because agitation can worsen upper-airway obstruction. Select only findings that were actually assessed. A score supports severity assessment but does not replace clinical judgement, senior review, or urgent airway management when clinically indicated.",
+      "source": "Ministry of Health Malaysia — Paediatric Protocols for Malaysian Hospitals, 5th Edition, Viral Croup, p.194; severity range at score 12 clarified using the published Westley classification. Checked 14 September 2026.",
+      "sourceUrl": "https://www.moh.gov.my/images/04-penerbitan/penerbitan-klinikal/perkhidmatan-OG-dan-pediatrik/pediatrik/FA_-_Paediatric_Protocols_5th_Edition_MOH_PDF_1-compressed.pdf",
+      "contexts": [],
+      "fields": [
+        {
+          "id": "consciousness",
+          "label": "Level of consciousness",
+          "options": [
+            {
+              "label": "Normal, including sleep",
+              "score": 0
+            },
+            {
+              "label": "Disoriented",
+              "score": 5
+            }
+          ]
+        },
+        {
+          "id": "cyanosis",
+          "label": "Cyanosis",
+          "options": [
+            {
+              "label": "None",
+              "score": 0
+            },
+            {
+              "label": "With agitation",
+              "score": 4
+            },
+            {
+              "label": "At rest",
+              "score": 5
+            }
+          ]
+        },
+        {
+          "id": "stridor",
+          "label": "Stridor",
+          "options": [
+            {
+              "label": "None",
+              "score": 0
+            },
+            {
+              "label": "With agitation",
+              "score": 1
+            },
+            {
+              "label": "At rest",
+              "score": 2
+            }
+          ]
+        },
+        {
+          "id": "air_entry",
+          "label": "Air entry",
+          "options": [
+            {
+              "label": "Normal",
+              "score": 0
+            },
+            {
+              "label": "Decreased",
+              "score": 1
+            },
+            {
+              "label": "Markedly decreased",
+              "score": 2
+            }
+          ]
+        },
+        {
+          "id": "retractions",
+          "label": "Retractions",
+          "options": [
+            {
+              "label": "None",
+              "score": 0
+            },
+            {
+              "label": "Mild",
+              "score": 1
+            },
+            {
+              "label": "Moderate",
+              "score": 2
+            },
+            {
+              "label": "Severe",
+              "score": 3
+            }
+          ]
+        }
+      ],
+      "severity": [
+        {
+          "min": 0,
+          "max": 2,
+          "label": "Mild"
+        },
+        {
+          "min": 3,
+          "max": 7,
+          "label": "Moderate"
+        },
+        {
+          "min": 8,
+          "max": 11,
+          "label": "Severe"
+        },
+        {
+          "min": 12,
+          "max": 17,
+          "label": "Impending respiratory failure"
+        }
+      ]
+    },
+    {
+      "id": "pecarn",
+      "kind": "risk-rule",
+      "label": "PECARN",
+      "title": "PECARN — minor head injury",
+      "eligibility": "For children under 18 with blunt head injury within 24 hours and GCS 14–15. Do not apply with suspected abuse, penetrating injury, bleeding disorder, ventricular shunt, brain tumour, neurological disease affecting assessment, or prior CT for this injury. Trivial injury without symptoms except abrasions/lacerations was not studied. Use clinical judgement; this is not a numerical score.",
+      "note": "Two age-specific pathways; all findings must be assessed. A low-risk result does not replace reassessment or safety-netting.",
+      "reference": "Altered mental state: agitation, unusual drowsiness, repeated questions or slow verbal response. Basal skull signs: bruising behind ears/around eyes, blood behind the eardrum or CSF leak.\nSevere mechanism: vehicle crash with ejection, rollover or another passenger killed; pedestrian or unhelmeted cyclist hit by a motor vehicle; high-impact object striking the head; fall >0.9 m if under 2, or >1.5 m if aged 2–17.\nFor intermediate risk, weigh observation versus CT using symptom progression, multiple findings, clinician experience and caregiver preference. Take extra care in infants under 3 months. Percentages are cohort estimates, not personalised probabilities.",
+      "source": "Kuppermann et al. Lancet 2009;374:1160–70, Figure 3. CHOP Acute Head Trauma Pathway. Checked 12 September 2026.",
+      "sourceUrl": "https://www.pecarn.org/studyDatasets/documents/Kuppermann_2009_The-Lancet_000.pdf",
+      "bands": [
+        {
+          "id": "under2",
+          "label": "under 2 years",
+          "fields": [
+            {
+              "id": "mental",
+              "label": "GCS 14 or altered mental state?",
+              "risk": "high"
+            },
+            {
+              "id": "skull",
+              "label": "Palpable skull fracture?",
+              "risk": "high"
+            },
+            {
+              "id": "haematoma",
+              "label": "Scalp haematoma at the temporal, parietal or occipital area?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "loc",
+              "label": "Loss of consciousness lasting at least 5 seconds?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "mechanism",
+              "label": "Severe mechanism (see reference for age-specific fall threshold)?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "behaviour",
+              "label": "Parent reports behaviour is not back to normal?",
+              "risk": "intermediate"
+            }
+          ],
+          "outcomes": {
+            "high": "Higher risk — CT recommended by rule; clinician review required.",
+            "intermediate": "Intermediate risk — observation versus CT; clinical judgement required.",
+            "low": "Very low risk — CT generally not indicated by rule; reassess and safety-net."
+          }
+        },
+        {
+          "id": "2to17",
+          "label": "2–17 years",
+          "fields": [
+            {
+              "id": "mental",
+              "label": "GCS 14 or altered mental state?",
+              "risk": "high"
+            },
+            {
+              "id": "skull",
+              "label": "Signs of a basal skull fracture?",
+              "risk": "high"
+            },
+            {
+              "id": "loc",
+              "label": "Any loss of consciousness after injury?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "vomiting",
+              "label": "Vomiting after the injury?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "mechanism",
+              "label": "Severe mechanism (see reference for age-specific fall threshold)?",
+              "risk": "intermediate"
+            },
+            {
+              "id": "headache",
+              "label": "Severe headache?",
+              "risk": "intermediate"
+            }
+          ],
+          "outcomes": {
+            "high": "Higher risk — CT recommended by rule; clinician review required.",
+            "intermediate": "Intermediate risk — observation versus CT; clinical judgement required.",
+            "low": "Very low risk — CT generally not indicated by rule; reassess and safety-net."
+          }
+        }
+      ]
+    },
+    {
+      "id": "resus",
+      "kind": "resus",
+      "title": "Resus medications — one weight",
+      "enabled": true,
+      "source": "PED HTA Paediatric Emergency Drug Calculator, May 2024. Displayed maxima used as instructed.",
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/16BNlgbZCMMKfORggqb511NgsKDWUEQ28/edit?gid=2121511188",
+      "note": "Weight applies to every row. Separate neonatal/child and indication-specific rows remain visible; select the appropriate regimen. Results follow the supplied May 2024 workbook. Volumes are shown only where supplied or explicitly defined.",
+      "rows": [
+        {
+          "name": "IV/IO Adrenaline (0.1 mg/mL)",
+          "factors": [
+            0.01
+          ],
+          "unit": "mg",
+          "caps": [
+            1
+          ],
+          "regimen": "0.01 mg/kg; maximum 1 mg"
+        },
+        {
+          "name": "IV/IO Adrenaline diluted volume",
+          "factors": [
+            0.1
+          ],
+          "unit": "mL",
+          "caps": [
+            10
+          ],
+          "regimen": "0.1 mg/mL: dilute 1 mL of 1 mg/mL with 9 mL NS"
+        },
+        {
+          "name": "IV Fluid bolus (except dengue)",
+          "factors": [
+            10
+          ],
+          "unit": "mL",
+          "regimen": "10 mL/kg over 5–10 minutes"
+        },
+        {
+          "name": "IV Fluid bolus (cardiogenic shock) / packed cells",
+          "factors": [
+            5
+          ],
+          "unit": "mL",
+          "regimen": "5 mL/kg"
+        },
+        {
+          "name": "IV Glucose / Dextrose 10%",
+          "factors": [
+            3
+          ],
+          "unit": "mL",
+          "regimen": "3 mL/kg"
+        },
+        {
+          "name": "DC shock",
+          "factors": [
+            4
+          ],
+          "unit": "J",
+          "caps": [
+            360
+          ],
+          "regimen": "4 J/kg; maximum 360 J"
+        },
+        {
+          "name": "IV Amiodarone (VF/pVT)",
+          "factors": [
+            5
+          ],
+          "unit": "mg",
+          "caps": [
+            300
+          ],
+          "regimen": "5 mg/kg over 3 minutes"
+        },
+        {
+          "name": "IM Adrenaline 1 mg/mL (anaphylaxis)",
+          "factors": [
+            0.01
+          ],
+          "unit": "mg",
+          "caps": [
+            0.5
+          ],
+          "regimen": "Source specifies age >6 months; minimum 0.1 mg",
+          "minimum": 0.1
+        },
+        {
+          "name": "IV Fentanyl (intubation)",
+          "factors": [
+            1,
+            2
+          ],
+          "unit": "mcg",
+          "caps": [
+            50,
+            100
+          ],
+          "regimen": "1–2 mcg/kg; displayed maximum 50–100 mcg"
+        },
+        {
+          "name": "IV Ketamine (intubation)",
+          "factors": [
+            1,
+            2
+          ],
+          "unit": "mg",
+          "regimen": "1–2 mg/kg"
+        },
+        {
+          "name": "IV Propofol (intubation)",
+          "factors": [
+            0.5,
+            2
+          ],
+          "unit": "mg",
+          "regimen": "0.5–2 mg/kg"
+        },
+        {
+          "name": "IV Suxamethonium (neonate)",
+          "factors": [
+            2
+          ],
+          "unit": "mg",
+          "caps": [
+            100
+          ],
+          "regimen": "2 mg/kg"
+        },
+        {
+          "name": "IV Suxamethonium (child)",
+          "factors": [
+            1
+          ],
+          "unit": "mg",
+          "caps": [
+            100
+          ],
+          "regimen": "1 mg/kg"
+        },
+        {
+          "name": "IV Rocuronium",
+          "factors": [
+            0.6,
+            1.2
+          ],
+          "unit": "mg",
+          "caps": [
+            50,
+            50
+          ],
+          "regimen": "0.6–1.2 mg/kg; source formula caps at 50 mg and rounds to whole mg",
+          "round": 0
+        },
+        {
+          "name": "IV Morphine",
+          "factors": [
+            0.1,
+            0.2
+          ],
+          "unit": "mg",
+          "caps": [
+            10,
+            10
+          ],
+          "regimen": "0.1–0.2 mg/kg"
+        },
+        {
+          "name": "IV Midazolam (slow bolus)",
+          "factors": [
+            0.1,
+            0.2
+          ],
+          "unit": "mg",
+          "caps": [
+            5,
+            10
+          ],
+          "regimen": "0.1–0.2 mg/kg"
+        },
+        {
+          "name": "IV Diazepam",
+          "factors": [
+            0.25
+          ],
+          "unit": "mg",
+          "caps": [
+            10
+          ],
+          "regimen": "0.25 mg/kg"
+        },
+        {
+          "name": "PR Diazepam",
+          "factors": [
+            0.2,
+            0.5
+          ],
+          "unit": "mg",
+          "caps": [
+            20,
+            20
+          ],
+          "regimen": "0.2–0.5 mg/kg"
+        },
+        {
+          "name": "IV Phenytoin",
+          "factors": [
+            20
+          ],
+          "unit": "mg",
+          "caps": [
+            2000
+          ],
+          "regimen": "20 mg/kg"
+        },
+        {
+          "name": "IV Phenobarbitone",
+          "factors": [
+            20
+          ],
+          "unit": "mg",
+          "caps": [
+            1000
+          ],
+          "regimen": "20 mg/kg"
+        },
+        {
+          "name": "IV Cefotaxime / Ceftriaxone",
+          "factors": [
+            50
+          ],
+          "unit": "mg",
+          "caps": [
+            2000
+          ],
+          "regimen": "50 mg/kg"
+        },
+        {
+          "name": "IV Sodium bicarbonate 8.4%",
+          "factors": [
+            1
+          ],
+          "unit": "mL",
+          "regimen": "1 mL/kg"
+        },
+        {
+          "name": "IV Calcium gluconate 10%",
+          "factors": [
+            0.5
+          ],
+          "unit": "mL",
+          "caps": [
+            20
+          ],
+          "regimen": "0.5 mL/kg"
+        },
+        {
+          "name": "IV Mannitol 10%",
+          "factors": [
+            0.25,
+            0.5
+          ],
+          "unit": "g",
+          "regimen": "0.25–0.5 g/kg"
+        },
+        {
+          "name": "IV Hypertonic saline 3%",
+          "factors": [
+            3,
+            5
+          ],
+          "unit": "mL",
+          "regimen": "3–5 mL/kg"
+        },
+        {
+          "name": "IV Tranexamic acid",
+          "factors": [
+            15
+          ],
+          "unit": "mg",
+          "caps": [
+            1000
+          ],
+          "regimen": "15 mg/kg"
+        }
+      ]
+    }
+  ]
+}

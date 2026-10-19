@@ -1,0 +1,88 @@
+name: Windows portable
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish the successful build as a private-repository release
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-portable-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: notepaeds-tauri/package-lock.json
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content notepaeds-tauri/package.json -Raw | ConvertFrom-Json).version
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid version' }
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - name: Prepare source
+        run: node tools/sync-92.cjs
+      - name: Check JavaScript and core behaviour
+        run: node notepaeds-tauri/tests/release-92-check.cjs
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: Install build dependencies
+        working-directory: notepaeds-tauri
+        run: npm ci
+      - name: Native tests
+        working-directory: notepaeds-tauri/src-tauri
+        run: cargo test --locked
+      - name: Build portable application
+        working-directory: notepaeds-tauri
+        run: npm run build -- --no-bundle
+      - name: Package portable application
+        shell: pwsh
+        run: ./tools/package-github.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NotePaeds-Windows-portable
+          path: |
+            portable/*.zip
+            portable/*.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: NotePaeds-Windows-portable
+          path: portable
+      - name: Publish versioned download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ needs.build.outputs.version }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          gh release create "v$VERSION" portable/* --target "$COMMIT" --title "NotePaeds $VERSION" --notes "Portable Windows build from commit $COMMIT. Extract the full ZIP and run NotePaeds.exe. Back up your current shift and library before upgrading."

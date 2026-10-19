@@ -1,0 +1,17 @@
+async page=>{
+ const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m)};
+ await page.goto('http://127.0.0.1:9211/qa');await page.evaluate(()=>localStorage.setItem('notepaeds-v8-notepad-shell-prefs',JSON.stringify({moduleAutoCheck:false})));await page.reload();await page.waitForFunction(()=>window.qa);await page.evaluate(()=>{qa.active().bed='';qa.active().qms=''});const ed=page.locator('#editor');
+ for(const code of ['y','Y','g','G','yt','YT','gt','GT','rt','RT']){await ed.fill('Before\n=='+code+'\nAfter');await ed.evaluate((e,n)=>e.setSelectionRange(n,n),9+code.length);await ed.press('Enter');const v=await ed.inputValue();ok(v.startsWith('Before\n== '+(code.length===2?'ED TRAUMA':code.toLowerCase()==='y'?'YELLOW ZONE':'GREEN ZONE')+' CLERKING ==')&&v.endsWith('\nAfter'),'shortcut '+code);ok(await page.evaluate(c=>qa.active().zone===({y:'yellow',g:'green',r:'red'}[c[0].toLowerCase()]),code),'zone '+code)}
+ await ed.fill('abc==y');await ed.press('Enter');ok((await ed.inputValue()).startsWith('abc==y'),'boundary respected');
+ await ed.fill('==y');ok(await ed.inputValue()==='==y','no premature expansion');await ed.press('Enter');
+ await page.getByRole('button',{name:'Bed / QMS',exact:true}).click();ok(await page.locator('#patientBed').inputValue()==='','bed optional');
+ const expected=['Bed 1','EYZ 1','Bed 2','Bed 3','EYZ 2','Bed 4','ISL 1','ISL 2','ISL 3','ISL 4','Cor 1','Cor 2','Cor 3','Cor 4','Bed 5','EYZ 3','Bed 6','Bed 7','EYZ 4','Bed 8'];ok(JSON.stringify(await page.locator('#patientBed option').allTextContents())===JSON.stringify(['Assign later',...expected]),'exact bed order');
+ await page.locator('[data-zone-bed="EYZ 2"]').click();await page.getByRole('button',{name:'Save location',exact:true}).click();ok(await page.evaluate(()=>qa.active().bed==='EYZ 2'),'map saves selection');
+ await page.getByRole('button',{name:'Bed / QMS',exact:true}).click();await page.locator('#patientZone').selectOption('green');ok(await page.locator('#qmsField').isVisible()&&!await page.locator('#bedField').isVisible(),'green QMS only');await page.locator('#patientQms').fill('123');await page.getByRole('button',{name:'Save location',exact:true}).click();ok(await page.evaluate(()=>qa.active().qms==='123'),'QMS saves');
+ await page.getByRole('button',{name:'Bed / QMS',exact:true}).click();await page.locator('#patientZone').selectOption('yellow');await page.screenshot({path:'output/playwright/zone-bed-map.png'});await page.getByRole('button',{name:'Cancel',exact:true}).click();ok(await page.evaluate(()=>qa.active().zone==='green'),'cancel does not change zone');
+ await ed.fill('==rt');await ed.press('Enter');const backup=await page.evaluate(()=>qa.shiftBackup());await page.evaluate(()=>window.confirm=()=>true);await page.evaluate(text=>{const input=[...document.querySelectorAll('input[type=file]')].find(x=>x.accept==='.json'&&x.hidden);const dt=new DataTransfer();dt.items.add(new File([text],'shift.json',{type:'application/json'}));input.files=dt.files;input.dispatchEvent(new Event('change'))},backup);await page.waitForTimeout(300);ok(await page.evaluate(()=>qa.active().zone==='red'),'red shift restored');
+ await page.evaluate(()=>qa.saveShift());await page.reload();await page.waitForFunction(()=>window.qa);ok(await page.evaluate(()=>qa.active().zone==='red'),'red persists restart');
+ await page.evaluate(r=>window.__zoneChecks=r,{passed:checks.length,checks});return {passed:checks.length,checks};
+}
+
+
