@@ -1,0 +1,16 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const ctx=vm.createContext({});vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../blood-investigations.js'),'utf8').split('// BLOOD_PARSER_UI')[0],ctx);
+const parse=raw=>{ctx.raw=raw;return vm.runInContext('parseBloodInvestigations(raw)',ctx)};
+const r=parse('**HB** 12.00 g/dL\nWBC 2.80 Low\nPLT 119\nPCV 36.60 %\nMCV 75.60\nMCHC 32.80');
+assert.equal(r.text,'FBC : Hb 12 / WBC 2.8 / PLT 119\nHCT 36.6 / MCV 75.6 / MCHC 32.8');
+const panels=parse('Sodium (mmol/L) 140\nPotassium 4.20 mmol/L\nUrea 5\nCreatinine 32 umol/L\nALT 21 U/L\nAST 30\nALP 100\nTotal Bilirubin 12\nDirect Bilirubin 3\nAlbumin 40\nCRP < 5 mg/L\nCalcium 2.30\nCorrected Calcium 2.40\nIonized Calcium 1.20\nMagnesium 0.80\nPO4 1.30\nhs-Troponin I 12 ng/L\nTroponin T 9\nPT 12 s\nAPTT 30\nINR 1.0\nTSH 2\nFT4 12\nLDL 2\nVBG pH 7.32\npCO2 40\nBase Excess -3\nGlucose 5\nLactate 1.2\nLDH 200\nProcalcitonin 0.2\nFerritin 22');
+for(const [key,value] of Object.entries({na:'140',k:'4.2',urea:'5',cr:'32',alt:'21',ast:'30',alp:'100',tbili:'12',dbili:'3',alb:'40',crp:'<5',ca:'2.3',cca:'2.4',ica:'1.2',mg:'0.8',po4:'1.3',tropi:'12',tropt:'9',pt:'12',aptt:'30',inr:'1',tsh:'2',ft4:'12',ldl:'2',ph:'7.32',pco2:'40',be:'-3',glucose:'5',lactate:'1.2',ldh:'200',pct:'0.2',ferritin:'22'}))assert.equal(panels.values[key],value,key);
+assert(panels.text.includes('hs-TropI 12 ng/L'));assert(panels.text.includes('VBG :'));assert(panels.text.includes('Na 140 mmol/L'));
+assert.equal(parse('Na 135-145\nHB (11–15)\nK\n4.2\nCRP unavailable').text,'');
+assert.equal(parse('Na 140\nSodium 141').values.na,undefined);assert.equal(parse('Na 140\nSodium 141').warnings.length,1);
+assert.equal(parse('Na 140\nSodium 140').warnings.length,0);
+assert.equal(parse('CRP Not Detected').values.crp,'Not Detected');assert.equal(parse('CRP NegativeExtra').text,'');
+assert.equal(parse('CRP ≤ 0.0100 mg/L').values.crp,'≤0.01');assert.equal(parse('WBC 1.20e3').values.wbc,'1.2e3');
+assert.equal(parse('Creatinine 1,200').text,'');assert.equal(parse('PCT 0.3').text,'');
+assert.equal(parse('CRP | mg/L | 5').values.crp,'5');
+console.log('Blood parser: panels, aliases, units, precision, comparisons, missing values, conflicts and ambiguity PASS');

@@ -1923,7 +1923,7 @@ checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "notepaeds"
-version = "9.3.4"
+version = "9.3.5"
 dependencies = [
  "reqwest 0.12.28",
  "ring",

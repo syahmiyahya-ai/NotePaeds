@@ -41,7 +41,9 @@ jobs:
       - name: Prepare source
         run: node tools/sync-92.cjs
       - name: Check JavaScript and core behaviour
-        run: node notepaeds-tauri/tests/release-92-check.cjs
+        run: |
+          node notepaeds-tauri/tests/release-92-check.cjs
+          node notepaeds-tauri/tests/blood-investigations.cjs
       - name: Install Rust toolchain
         run: |
           rustup toolchain install stable --profile minimal

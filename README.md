@@ -6,7 +6,7 @@ A portable Windows clinical drafting editor with a Notepad-like outer window, pa
 
 Use [GitHub Releases](https://github.com/syahmiyahya-ai/NotePaeds/releases/latest). This repository is private: sign in with an account that has repository access. Extract the complete portable ZIP and run `NotePaeds.exe`. Export your current shift and reusable library before upgrading; retain the previous folder while testing.
 
-Current source version: **9.3.4**. Open **Help → Quick start** for the Apple-inspired guide and isolated shortcut practice. The proposed HTA November 2025 medication reconciliation is not activated in this version.
+Current source version: **9.3.5**. Open **Help → Quick start** for the Apple-inspired guide and isolated shortcut practice. The proposed HTA November 2025 medication reconciliation is not activated in this version.
 
 ## Future updates
 

@@ -726,7 +726,7 @@ function settingsDialog(){
 }
 function applyPrefs(){$('#editor').style.fontSize=`${Number(prefs.fontSize)||15}px`;$('#statusbar').classList.toggle('hidden',prefs.statusbar===false)}
 function shortcuts(){openDialog('Keyboard shortcuts',`<div class="preview" style="font-family:var(--ui)">Ctrl+N — New patient\nCtrl+Tab / Ctrl+Shift+Tab — Switch patient\nCtrl+Shift+S — Save Shift As\nCtrl+Enter — Copy note\nCtrl+Z — Undo\nCtrl+Y or Ctrl+Shift+Z — Redo\nF6 — Patient ID parser\nF7 — Vital signs parser\nF8 — Timestamp divider\nF9 or Ctrl+/ — Quick Insert\nF4 — Calculator / Clinical scoring\n/ — Quick Insert snippets\n> — Smart medication prompts</div>`,[{label:'Close'}])}
-function about(){openDialog('About NotePaeds',`<p style="font-size:12px;line-height:1.5;margin-top:0"><b>NotePaeds 9.3.4 — Notepad Shell</b><br>Offline multi-patient clinical scratchpad built around a Windows Notepad-style interface.</p><div class="warn">ICD-10 and medication suggestions are convenience aids, not prescribing or coding authorities. Verify them against the clinical record and current local protocols.</div>`,[{label:'Close'}])}
+function about(){openDialog('About NotePaeds',`<p style="font-size:12px;line-height:1.5;margin-top:0"><b>NotePaeds 9.3.5 — Notepad Shell</b><br>Offline multi-patient clinical scratchpad built around a Windows Notepad-style interface.</p><div class="warn">ICD-10 and medication suggestions are convenience aids, not prescribing or coding authorities. Verify them against the clinical record and current local protocols.</div>`,[{label:'Close'}])}
 async function alwaysOnTop(){if(window.__TAURI__?.core?.invoke){try{const enabled=await window.__TAURI__.core.invoke('toggle_always_on_top');toast(enabled?'Always on top enabled.':'Always on top disabled.');return}catch{return toast('Always-on-top could not be changed.')}}if(!('documentPictureInPicture' in window))return toast('Always-on-top requires the Tauri app or supported Chrome/Edge.');try{const pip=await window.documentPictureInPicture.requestWindow({width:560,height:420});state.pip=pip;pip.document.head.innerHTML=`<style>html,body{height:100%;margin:0;font-family:Segoe UI;background:#fff}body{display:flex;flex-direction:column}.bar{height:30px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid #ddd;background:#f3f3f3;font-size:11px}.bar button{margin-left:6px;border:1px solid #ccc;background:#fff;border-radius:3px;height:23px}.title{flex:1}.edit{flex:1;width:100%;resize:none;border:0;outline:0;padding:9px;font:14px Consolas;line-height:1.45;box-sizing:border-box}</style>`;pip.document.body.innerHTML='<div class="bar"><span class="title"></span><button id="ts">Timestamp</button><button id="copy">Copy</button><button id="new">New</button></div><textarea class="edit"></textarea>';state.pipEditor=pip.document.querySelector('.edit');const ed=state.pipEditor;ed.oninput=()=>{const p=active();p.text=ed.value;syncTitle(p);$('#editor').value=p.text;renderTabs();updateStatus();queueSave()};pip.document.querySelector('#ts').onclick=()=>{timestamp();syncPip()};pip.document.querySelector('#copy').onclick=copyNote;pip.document.querySelector('#new').onclick=()=>{addPatient();syncPip()};pip.addEventListener('pagehide',()=>{state.pip=null;state.pipEditor=null},{once:true});syncPip();ed.focus()}catch{toast('Always-on-top window could not be opened.')}}
 function syncPip(){if(!state.pip||state.pip.closed||!state.pipEditor)return;const p=active();state.pip.document.querySelector('.title').textContent=p.name+'.txt';if(state.pipEditor.value!==p.text)state.pipEditor.value=p.text}
 function slashUpdate(){slashClose()}
@@ -1829,12 +1829,90 @@ inlineEditor.addEventListener('keydown',event=>{
 inlineEditor.addEventListener('input',()=>{recentMedicationInsertion=null});
 inlineEditor.addEventListener('pointerdown',()=>{recentMedicationInsertion=null});
 
+// Local, label-based extraction. No reference-range or clinical interpretation.
+const bloodFields=[
+ ['FBC','hb','Hb',String.raw`H(?:B|GB)|Haemoglobin|Hemoglobin`],
+ ['FBC','wbc','WBC',String.raw`WBC|White[ \t]+(?:Blood[ \t]+)?Cells?(?:[ \t]+Count)?`],
+ ['FBC','plt','PLT',String.raw`PLT|Platelets?(?:[ \t]+Count)?`],
+ ['FBC2','hct','HCT',String.raw`PCV|HCT|Haematocrit|Hematocrit`],['FBC2','mcv','MCV','MCV'],['FBC2','mchc','MCHC','MCHC'],
+ ['RP','na','Na',String.raw`Sodium|Na(?:\+)?`],['RP','k','K',String.raw`Potassium|K(?:\+)?`],
+ ['RP','urea','Urea',String.raw`Urea|Ur`],['RP','cr','Cr',String.raw`Creatinine|Creat|Cr`],
+ ['RP','cl','Cl',String.raw`Chloride|Cl(?:-)?`],['RP','hco3','HCO3',String.raw`Bicarbonate|HCO3(?:-)?|HCO₃(?:⁻)?`],
+ ['RP','egfr','eGFR',String.raw`eGFR|Estimated[ \t]+GFR`],['RP','bun','BUN',String.raw`Blood[ \t]+Urea[ \t]+Nitrogen|Urea[ \t]+Nitrogen|BUN`],
+ ['LFT','alt','ALT',String.raw`ALT|SGPT|Alanine[ \t]+(?:Aminotransferase|Transaminase)`],
+ ['LFT','ast','AST',String.raw`AST|SGOT|Aspartate[ \t]+(?:Aminotransferase|Transaminase)`],
+ ['LFT','alp','ALP',String.raw`ALP|Alkaline[ \t]+Phosphatase`],['LFT','ggt','GGT',String.raw`GGT|Gamma[ \t-]+(?:Glutamyl[ \t]+Transferase|GT)`],
+ ['LFT','tbili','T.Bili',String.raw`Total[ \t]+Bilirubin|T\.?[ \t]*Bili(?:rubin)?|TBIL|Bilirubin`],
+ ['LFT','dbili','D.Bili',String.raw`Direct[ \t]+Bilirubin|Conjugated[ \t]+Bilirubin|D\.?[ \t]*Bili(?:rubin)?|DBIL`],
+ ['LFT','alb','Alb',String.raw`Albumin|Alb`],['LFT','tp','TP',String.raw`Total[ \t]+Protein|T\.?[ \t]*Protein|TP`],
+ ['CRP','crp','CRP',String.raw`C[ \t-]*Reactive[ \t]+Protein|CRP`],
+ ['Minerals','ca','Ca',String.raw`Total[ \t]+Calcium|Calcium|Ca(?:\+\+)?`],
+ ['Minerals','cca','Adj.Ca',String.raw`(?:Corrected|Adjusted)[ \t]+(?:Calcium|Ca)|(?:cCa|Adj\.?[ \t]*Ca)`],
+ ['Minerals','ica','iCa',String.raw`Ionis?ed[ \t]+Calcium|Ionized[ \t]+Calcium|iCa`],
+ ['Minerals','mg','Mg',String.raw`Magnesium|Mg`],['Minerals','po4','PO4',String.raw`Inorganic[ \t]+(?:Phosphate|Phosphorus)|Phosphate|Phosphorus|PO4|PO₄`],
+ ['Cardiac','tropi','TropI',String.raw`(?:hs[ \t-]*)?(?:Troponin[ \t-]*I|Trop[ \t-]*I|TnI)`],
+ ['Cardiac','tropt','TropT',String.raw`(?:hs[ \t-]*)?(?:Troponin[ \t-]*T|Trop[ \t-]*T|TnT)`],
+ ['Coag','pt','PT',String.raw`Prothrombin[ \t]+Time|PT`],['Coag','aptt','APTT',String.raw`Activated[ \t]+Partial[ \t]+Thromboplastin[ \t]+Time|aPTT|APTT`],
+ ['Coag','inr','INR','INR'],['Coag','ddimer','D-dimer',String.raw`D[ \t-]*Dimer`],['Coag','fibrinogen','Fibrinogen','Fibrinogen'],
+ ['TFT','tsh','TSH',String.raw`Thyroid[ \t]+Stimulating[ \t]+Hormone|TSH`],['TFT','ft4','FT4',String.raw`Free[ \t]+T4|FT4`],['TFT','ft3','FT3',String.raw`Free[ \t]+T3|FT3`],
+ ['Lipids','chol','Chol',String.raw`Total[ \t]+Cholesterol|Cholesterol|Chol`],['Lipids','ldl','LDL',String.raw`LDL(?:[ \t-]+Cholesterol)?`],['Lipids','hdl','HDL',String.raw`HDL(?:[ \t-]+Cholesterol)?`],['Lipids','tg','TG',String.raw`Triglycerides?|TG`],
+ ['Gas','ph','pH','pH'],['Gas','pco2','pCO2',String.raw`pCO2|pCO₂`],['Gas','po2','pO2',String.raw`pO2|pO₂`],['Gas','be','BE',String.raw`Base[ \t]+Excess|BE`],
+ ['Other','esr','ESR',String.raw`Erythrocyte[ \t]+Sedimentation[ \t]+Rate|ESR`],['Other','pct','Procalcitonin',String.raw`Procalcitonin`],
+ ['Other','lactate','Lactate',String.raw`Lactate|Lactic[ \t]+Acid`],['Other','glucose','Glucose',String.raw`Blood[ \t]+Glucose|Glucose|Random[ \t]+Blood[ \t]+Sugar|RBS|FBS`],
+ ['Other','hba1c','HbA1c',String.raw`HbA1c|Ha?emoglobin[ \t]+A1c|Glycated[ \t]+Ha?emoglobin`],
+ ['Other','ck','CK',String.raw`Creatine[ \t]+Kinase|CK|CPK`],['Other','ldh','LDH',String.raw`Lactate[ \t]+Dehydrogenase|LDH`],
+ ['Other','amylase','Amylase','Amylase'],['Other','lipase','Lipase','Lipase'],['Other','ferritin','Ferritin','Ferritin'],['Other','urate','Urate',String.raw`Uric[ \t]+Acid|Urate`]
+].map(([panel,id,label,alias])=>({panel,id,label,alias}));
+const bloodUnitPattern=String.raw`(?:mL\s*\/\s*min\s*\/\s*1\.73\s*m(?:2|²)|(?:[x×]\s*)?10(?:\^|\*|\*\*)?(?:9|12)\s*\/\s*L|(?:mmol|µmol|μmol|umol|pmol|nmol|mEq|mg|ng|pg|µg|μg|ug|mcg|g|mIU|µIU|μIU|uIU|IU|mU|U)\s*\/\s*(?:dL|mL|L|mol)|mmHg|kPa|mm\s*\/\s*h(?:r)?|seconds?|secs?|s|fL|pg|%)`;
+function bloodNumber(value){if(!/\d/.test(value))return value.replace(/[ \t]+/g,' ');return value.replace(/(\.\d*?[1-9])0+(?=[eE]|$)|\.0+(?=[eE]|$)/,'$1').replace(/[ \t]+/g,'')}
+function parseBloodInvestigations(raw){
+ const source=String(raw||'').replace(/\*\*|__/g,'').replace(/\r/g,'');const candidates=[];
+ for(const field of bloodFields){
+  const pattern=new RegExp(String.raw`(^|[\s|;/])(?<label>${field.alias})(?![A-Za-z0-9])[ \t]*(?:[([](?<preunit>${bloodUnitPattern})[)\]][ \t]*)?(?:[:=|][ \t]*)?(?:(?<bareunit>${bloodUnitPattern})[ \t]*(?:[|:][ \t]*)?)?(?:(?:Critical[ \t]+)?(?:High|Low|H|L)[ \t]+)?(?<value>(?:[<>≤≥]=?[ \t]*)?[+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?|Not[ \t]+Detected|Non[ \t-]*Reactive|Negative|Positive|Reactive|Detected|Pending|Haemolysed|Hemolyzed)(?![A-Za-z\d.,]|[ \t]*[-–—~][ \t]*\d)(?:[ \t]*(?:\|[ \t]*)?(?<postunit>${bloodUnitPattern})(?![A-Za-z]))?`,'gimu');
+  for(const match of source.matchAll(pattern)){
+   const labelStart=match.index+match[1].length,labelEnd=labelStart+match.groups.label.length;
+   // A generic alias must not consume the tail of a more specific label.
+   if(/^hs[ \t-]*$/i.test(source.slice(Math.max(0,labelStart-3),labelStart))&&!/^hs/i.test(match.groups.label))continue;
+   const unit=(match.groups.postunit||match.groups.preunit||match.groups.bareunit||'').trim();let label=field.label;
+   if(/^hs/i.test(match.groups.label)&&/^Trop/.test(label))label='hs-'+label;
+   candidates.push({field,label,labelStart,labelEnd,value:bloodNumber(match.groups.value),unit});
+  }
+ }
+ candidates.sort((a,b)=>(b.labelEnd-b.labelStart)-(a.labelEnd-a.labelStart)||a.labelStart-b.labelStart);
+ const accepted=[];for(const candidate of candidates)if(!accepted.some(other=>candidate.labelStart<other.labelEnd&&candidate.labelEnd>other.labelStart))accepted.push(candidate);
+ const values={},warnings=[],items=[];
+ for(const field of bloodFields){const readings=accepted.filter(x=>x.field.id===field.id);const unique=[...new Map(readings.map(x=>[[x.label,x.value,x.unit.toLowerCase().replace(/\s/g,'')].join('|'),x])).values()];if(unique.length>1){warnings.push('Multiple '+field.label+' results: '+unique.map(x=>x.value+(x.unit?' '+x.unit:'')).join('; ')+'. Not inserted automatically; choose the intended result in the preview.');continue}if(unique.length){const item=unique[0];values[field.id]=item.value;items.push(item)}}
+ const format=item=>item.label+' '+item.value+(/^FBC/.test(item.field.panel)||!item.unit?'':' '+item.unit);
+ const byPanel=panel=>items.filter(item=>item.field.panel===panel).map(format);
+ const lines=[],fbc=byPanel('FBC'),fbc2=byPanel('FBC2');if(fbc.length)lines.push('FBC : '+fbc.join(' / '));else if(fbc2.length)lines.push('FBC :');if(fbc2.length)lines.push(fbc2.join(' / '));
+ for(const panel of ['RP','LFT','CRP','Minerals','Cardiac','Coag','TFT','Lipids','Gas','Other']){const found=byPanel(panel);if(!found.length)continue;if(['CRP','Minerals','Cardiac','Other'].includes(panel))lines.push(found.join(' / '));else{let label=panel;if(panel==='Gas')label=/\bVBG\b/i.test(source)&&!/\bABG\b/i.test(source)?'VBG':/\bABG\b/i.test(source)&&!/\bVBG\b/i.test(source)?'ABG':'Blood gas';lines.push(label+' : '+found.join(' / '))}}
+ return {values,items,warnings,text:lines.join('\n')};
+}
+
+// BLOOD_PARSER_UI
+fbcParser=function(){
+ if($('#fbcInput')&&$('#dialog').classList.contains('show')){$('#fbcInput').focus();return}
+ const target=inlineTarget();openDialog('Blood investigations parser','<p class="tiny">Paste labelled results. FBC, RP, LFT, CRP, Ca/Mg/PO4, troponin, coagulation, TFT, lipids, blood gas and common additional tests are recognised. Supplied units and comparison signs are preserved; no results or normal ranges are invented.</p><label for="fbcInput">Source report</label><textarea id="fbcInput" class="area" spellcheck="false" autocomplete="off" placeholder="Paste your laboratory report here"></textarea><div id="bloodWarnings" role="status"></div><label for="fbcPreview">Review and edit before inserting</label><textarea id="fbcPreview" class="area" spellcheck="false" placeholder="Paste results to preview"></textarea><p class="tiny">Only recognised labels are included. Add other tests by editing this preview. Changing the source regenerates the preview. Parsing runs locally.</p>',[{label:'Cancel'},{label:'Insert',primary:true,close:false,fn:()=>{const text=$('#fbcPreview').value.trim();if(!text)return toast('No results to insert.');if(!validInlineTarget(target))return toast('The patient or note changed. Reopen the blood parser.');const before=target.snapshot.slice(0,target.start),after=target.snapshot.slice(target.start+target.text.length);replaceInline(target,(before&&!before.endsWith('\n')?'\n':'')+text+(after&&!after.startsWith('\n')?'\n':''));closeDialog();toast('Blood investigations inserted.')}}]);
+ $('#fbcInput').oninput=()=>{const result=parseBloodInvestigations($('#fbcInput').value);$('#fbcPreview').value=result.text;$('#bloodWarnings').textContent=result.warnings.join('\n')||(!result.text&&$('#fbcInput').value.trim()?'No recognised results. Review the source labels.':'');$('#bloodWarnings').style.whiteSpace='pre-wrap'};$('#fbcInput').focus();
+};
+fbcMenu.innerHTML='Blood investigation parser <span class="shortcut" aria-hidden="true">F5</span>';
+const alarmMenu=$('[data-action=timer]');if(alarmMenu)alarmMenu.insertAdjacentHTML('beforeend',' <span class="shortcut" aria-hidden="true">Ctrl+Shift+A</span>');
+window.addEventListener('keydown',event=>{
+ if(event.isComposing||event.repeat)return;const blood=event.key==='F5'&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.shiftKey,alarm=event.ctrlKey&&event.shiftKey&&!event.metaKey&&!event.altKey&&event.code==='KeyA';if(!blood&&!alarm)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(blood&&$('#fbcInput')&&$('#dialog').classList.contains('show')){$('#fbcInput').focus();return}
+ if(alarm&&$('#alarmMin')&&$('#dialog').classList.contains('show')){$('#alarmMin').focus();$('#alarmMin').select();return}
+ if($('#dialog').classList.contains('show')||inlineSession){toast('Apply, cancel or close the current editor first.');return}
+ closeMenus();if(blood)fbcParser();else{timerDialog();$('#alarmMin')?.focus();$('#alarmMin')?.select()}
+},true);
+const shortcutsBeforeBlood=shortcuts;shortcuts=function(){shortcutsBeforeBlood();const preview=$('#dialogBody .preview');if(preview)preview.textContent='F5 — Blood investigations parser\nCtrl+Shift+A — Patient alarm\n'+preview.textContent};
+
 // Optional, local onboarding. Practice never writes to the patient workspace.
 const onboardingKey='notepaeds-onboarding-v1';
 const onboardingSteps=[
  {id:'welcome',title:'A quick start',body:'Write in the familiar Notepad window. Use inline menus when you need a snippet, medication or score. This guide takes a few minutes; you can leave and resume anytime.',tips:['Practice here stays separate from your patient notes.','Only the guide position and completion are remembered.'],practice:'//',hint:'Type // in the practice box to open a sample snippet menu.'},
  {id:'patients',title:'Patients, zones and locations',body:'Each patient has a separate tab. Titles show the name first when available. Bed and QMS are optional and can be changed later.',tips:['Ctrl+N creates a patient. Ctrl+Tab moves between patients.','Type ==y or ==g then Enter for Yellow or Green clerking. Use ==yt, ==gt or ==rt for trauma.','Type @B1, @E2, @C3 or @i2 then Enter for a Yellow location. Type @5405 then Enter for Green QMS 5405.'],practice:'@B1',hint:'Try @B1, @E2, @C3, @i2 or @5405, then Enter. This changes only the practice box.'},
- {id:'parsers',title:'Paste and preview',body:'Use F6 for patient identifiers and F7 for vital signs. Preview the parsed result before inserting it into the note or its matching placeholders.',tips:['Missing values stay missing. Check patient, units and weight before insertion.','Tools → Patient & investigations → Blood investigation parser — FBC provides a two-line preview.','F8 adds a timestamp divider.'],practice:null},
+ {id:'parsers',title:'Paste and preview',body:'Use F5 for blood investigations, F6 for patient identifiers and F7 for vital signs. Preview the parsed result before inserting it into the note or its matching placeholders.',tips:['Missing values stay missing. Check patient, units and weight before insertion.','F5 recognises FBC, RP, LFT, CRP, minerals, troponin and other labelled tests. Review the editable preview.','F8 adds a timestamp divider. Ctrl+Shift+A opens the patient alarm.'],practice:null},
  {id:'inline',title:'Keep your hands on the keyboard',body:'At the start of a line or after a space, type // for snippets, ;; for medications and IV fluids, or ## for scoring. Keep typing to filter.',tips:['↑ and ↓ select; Enter chooses; Esc dismisses and keeps your typed search.','Scoring opens its calculator; review and confirm the result before insertion.','Ctrl+Space opens Spotlight. F2, F3 and F4 search snippets, medications and scoring.'],practice:'//',hint:'Try //, ;; or ##, then a search word. Use arrows and Enter or click an option.'},
  {id:'medications',title:'Insert first; edit when needed',body:'Selecting a medication inserts its saved prescription. Immediately press Tab, or click the small Edit button, to review dose, frequency, formulation and duration. Alt+Enter reopens a tracked order later.',tips:['Enter applies an edit; Esc keeps the existing prescription. Continuing to type ends the immediate Tab opportunity.','IV fluids open their calculation editor. Choose direct volume, mL/kg, bolus or maintenance and review the result.','Patient only is the default. Save as new creates a reusable regimen; Update original requires a before/after review.','Red arithmetic feedback needs review. Missing weight does not create a calculated patient dose. The HTA reconciliation is still pending; do not assume the test library has been fully reconciled.'],practice:';;',hint:'Select the fictional practice medication, then press Tab. No dose is supplied or calculated.'},
  {id:'coding',title:'ICD-10 suggestions',body:'The status bar can suggest codes from documented diagnoses. Click a verified code to copy the code alone; use Details to inspect its description and certainty.',tips:['Tools → AI & coding → Search ICD-10 library works offline using the labelled WHO ICD-10 2019 reference. Confirm your workplace coding edition.','AI search requires a configured API key and consent. Supply reviewed, de-identified clinical text and review proposed diagnoses.','Progress, errors and Retry appear in the search panel. A suggestion is not a confirmed diagnosis.'],practice:null},
