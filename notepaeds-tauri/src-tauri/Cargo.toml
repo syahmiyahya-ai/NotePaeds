@@ -1,7 +1,7 @@
 [package]
 name = "notepaeds"
-version = "9.3.3"
-description = "NotePaeds 9.3.3 Notepad Shell"
+version = "9.3.4"
+description = "NotePaeds 9.3.4 Notepad Shell"
 authors = ["NotePaeds"]
 edition = "2021"
 

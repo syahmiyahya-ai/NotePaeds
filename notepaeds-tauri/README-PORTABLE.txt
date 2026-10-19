@@ -1,4 +1,4 @@
-# NotePaeds 9.3.3
+# NotePaeds 9.3.4
 
 Quick start now has an Apple-inspired setup-assistant layout, chapter sidebar, soft illustrations, rounded practice cards and reduced-motion support.
 
@@ -20,7 +20,7 @@ The main window remains a compact Notepad-style editor. Search, medication and I
 
 ## Upgrade
 
-Export your current shift and clinical library, close the old application, and extract the entire ZIP into a new folder. Keep the modules folder beside NotePaeds.exe. Import your saved clinical library into the new copy if you have custom entries. Keep your old folder until you have checked your notes and custom library. This 9.3.3 package is a manual download; automatic availability depends on publication of the signed update feed.
+Export your current shift and clinical library, close the old application, and extract the entire ZIP into a new folder. Keep the modules folder beside NotePaeds.exe. Import your saved clinical library into the new copy if you have custom entries. Keep your old folder until you have checked your notes and custom library. This 9.3.4 package is a manual download; automatic availability depends on publication of the signed update feed.
 
 Windows x64 and WebView2 are required. If a shared or protected folder blocks replacement, the updater keeps the verified download and displays its location for manual replacement. Notes stay in the existing local WebView profile; they are not encrypted by this release. API keys are encrypted separately.
 
@@ -35,7 +35,7 @@ Zone starters: type ==y or ==g then Enter for Yellow or Green zone clerking. ==y
 
 Fast location entry: @B1 through @B8 assign Bed 1-8; @E1-@E4 assign EYZ; @C1-@C4 assign corridor; @I1-@I4 assign isolation. @5405 assigns Green QMS 5405. All are case-insensitive and apply on Enter at a word boundary; only the shortcut is removed. Bed shortcuts set Yellow zone. The revised floor map shows orange Bed/EYZ, pink ISL/Cor and white walls.
 
-## New in 9.3.3
+## New in 9.3.4
 AI ICD-10 opens a visible review/search panel. Enter diagnosis or de-identified clinical findings, review the text, and click Search. Progress, errors, empty results and retry are visible. Possible diagnoses are marked for review. Qualifiers are retained. Click valid terminal codes to copy only the code. Patient/note changes discard stale results.
 Tools > Search ICD-10 library searches 12,221 code/title entries from WHO ICD-10 2019. Edition is explicitly labelled; confirm it matches your workplace. This dataset validates codes and titles; it is not a complete coding engine and lacks inclusion/exclusion instructions. Source: https://icdcdn.who.int/icd10/index.html . Reference guidance: https://icdcdn.who.int/icd10/metainfo.html . The reference is bundled with this app version.
 Startup library checks use the existing HTTPS module address in Settings and run in the background. Click the Library status to review updates. Personal edits are preserved; unknown or overlapping changes default to Keep mine. Reviewed updates retain a local rollback snapshot. Restore previous library is in Tools. Snippets, medications/fluids and scoring remain available offline.

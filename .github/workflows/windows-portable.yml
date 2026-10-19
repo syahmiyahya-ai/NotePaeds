@@ -49,9 +49,19 @@ jobs:
       - name: Install build dependencies
         working-directory: notepaeds-tauri
         run: npm ci
+      - name: Cache Rust dependencies and build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            notepaeds-tauri/src-tauri/target
+          key: ${{ runner.os }}-notepaeds-rust-${{ hashFiles('notepaeds-tauri/src-tauri/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-notepaeds-rust-
       - name: Native tests
         working-directory: notepaeds-tauri/src-tauri
-        run: cargo test --locked
+        run: cargo test --release --locked
       - name: Build portable application
         working-directory: notepaeds-tauri
         run: npm run build -- --no-bundle
