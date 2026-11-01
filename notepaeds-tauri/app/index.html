@@ -993,6 +993,7 @@ $('#aiIcdCheck').onclick=aiIcdPanel;
 const generationSessions=new Map();
 let generationBusy=false;
 function hasPatientIdentifiers(text){return /\bWCH\s*\d+|\b\d{6}-\d{2}-\d{4}\b|\b(?:MRN|NRIC|IC number|patient name|DOB|date of birth)\s*:/i.test(text)}
+function leafletFileName(uri){const mime=String(uri).match(/^data:(image\/[a-z0-9.+-]+);base64,/i)?.[1]?.toLowerCase()||'';return 'NotePaeds-discharge-leaflet-draft.'+(mime==='image/jpeg'||mime==='image/jpg'?'jpg':'png')}
 function refreshGeneration(){for(const s of generationSessions.values())s.refresh?.()}
 async function generationPanel(){
   const sourcePatient=active().id,invoke=window.__TAURI__?.core?.invoke;
@@ -1008,7 +1009,7 @@ async function generationPanel(){
   <label class="review-line"><input id="generationReviewed" type="checkbox"> I reviewed all fields and agree to send this de-identified information and instructions to Google Gemini.</label></fieldset>
   <button id="generationSend" class="btn primary">Generate text</button>
   <div class="field" style="margin-top:16px"><label for="generationResult">Text draft — review and edit before use</label><textarea id="generationResult" class="area" style="min-height:180px"></textarea></div>
-  <section id="leafletImageSection"><h3 style="font-size:14px">Discharge leaflet image</h3><div class="warn">Review the text above first (maximum 5,000 characters). Image generation is a separate billed API request and may take several minutes. Check every word, dose and warning in the finished image against your text before use.</div><div class="field"><label for="leafletStyle">Image appearance (optional; no identifiers)</label><input class="input" id="leafletStyle" maxlength="1000"></div><label class="review-line"><input type="checkbox" id="leafletReviewed"> I reviewed this text and agree to send it and the appearance instructions to Google Gemini to generate a leaflet image.</label><button id="leafletGenerate" class="btn primary">Generate leaflet image</button><div id="leafletPreview" style="margin-top:12px"></div><button class="btn" id="leafletSave">Save PNG</button><button class="btn" id="leafletPrint">Print image</button></section>
+  <section id="leafletImageSection"><h3 style="font-size:14px">Discharge leaflet image</h3><div class="warn">Review the text above first (maximum 5,000 characters). Image generation is a separate billed API request and may take several minutes. Check every word, dose and warning in the finished image against your text before use.</div><div class="field"><label for="leafletStyle">Image appearance (optional; no identifiers)</label><input class="input" id="leafletStyle" maxlength="1000"></div><label class="review-line"><input type="checkbox" id="leafletReviewed"> I reviewed this text and agree to send it and the appearance instructions to Google Gemini to generate a leaflet image.</label><button id="leafletGenerate" class="btn primary">Generate leaflet image</button><div id="leafletPreview" style="margin-top:12px"></div><button class="btn" id="leafletSave">Save image</button><button class="btn" id="leafletPrint">Print image</button></section>
   <div class="tiny" style="margin-top:12px">Drafts stay in memory for this app session. No automatic insertion or sending. Approved SCAN, asthma action plan and measles forms remain KIV.</div>`;
   openDialog('Generate',html,[{label:'Close'},{label:'Copy draft',close:false,fn:async()=>{if(!s.draft||s.busy)return;try{await navigator.clipboard.writeText(s.draft);toast('Draft copied.')}catch{toast('Select the draft and press Ctrl+C.')}}},{label:'Insert draft',close:false,fn:()=>{if(!s.draft||s.busy)return;if(active().id!==sourcePatient)return toast('Return to the original patient before inserting.');insertText(s.draft);closeDialog()}}]);
   const el=id=>$('#'+id),send=el('generationSend'),result=el('generationResult'),status=el('generationStatus'),keyStatus=el('generationKeyStatus');
@@ -1058,7 +1059,7 @@ async function generationPanel(){
     const input={text:s.draft,language:s.form.language,style:s.style,reviewed:s.imageReviewed};
     run('Generating leaflet image',async()=>{s.image=await invoke('generate_leaflet_image',{input});s.imageReviewed=false});
   };
-  el('leafletSave').onclick=()=>{if(!s.image)return;const a=document.createElement('a');a.href=s.image;a.download='NotePaeds-discharge-leaflet-draft.png';a.click()};
+  el('leafletSave').onclick=()=>{if(!s.image)return;const a=document.createElement('a');a.href=s.image;a.download=leafletFileName(s.image);a.click()};
   el('leafletPrint').onclick=async()=>{if(!s.image)return;const page=$('#leafletPrintPage');page.replaceChildren();const img=document.createElement('img');img.src=s.image;page.appendChild(img);try{await img.decode();document.body.classList.add('print-leaflet');window.print()}catch{toast('The image is not ready to print. Try again.')}};
   el('generationUseKey').onclick=async()=>{
     const key=el('generationKey').value;el('generationKey').value='';

@@ -459,19 +459,74 @@ fn is_standard_base64(data: &str) -> bool {
             .all(|c| c.is_ascii_alphanumeric() || b"+/=".contains(&c))
 }
 
-fn png_base64_error(mime: &str, data: &str) -> Option<&'static str> {
+fn base64_value(byte: u8) -> Option<u8> {
+    match byte {
+        b'A'..=b'Z' => Some(byte - b'A'),
+        b'a'..=b'z' => Some(byte - b'a' + 26),
+        b'0'..=b'9' => Some(byte - b'0' + 52),
+        b'+' => Some(62),
+        b'/' => Some(63),
+        _ => None,
+    }
+}
+
+fn decoded_image_header(data: &str) -> Option<Vec<u8>> {
+    if !is_standard_base64(data) {
+        return None;
+    }
+    let bytes = data.as_bytes();
+    let mut out = Vec::with_capacity(8);
+    let mut index = 0;
+    while out.len() < 8 && index + 1 < bytes.len() {
+        let a = base64_value(bytes[index])?;
+        let b = base64_value(bytes[index + 1])?;
+        let c_byte = bytes.get(index + 2).copied().unwrap_or(b'=');
+        let d_byte = bytes.get(index + 3).copied().unwrap_or(b'=');
+        if c_byte == b'=' && d_byte != b'=' {
+            return None;
+        }
+        out.push((a << 2) | (b >> 4));
+        if c_byte != b'=' {
+            let c = base64_value(c_byte)?;
+            out.push((b << 4) | (c >> 2));
+            if d_byte != b'=' {
+                let d = base64_value(d_byte)?;
+                out.push((c << 6) | d);
+            }
+        }
+        index += 4;
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
+fn is_png_header(header: &[u8]) -> bool {
+    header.starts_with(&[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+}
+
+fn is_jpeg_header(header: &[u8]) -> bool {
+    header.starts_with(&[0xFF, 0xD8, 0xFF])
+}
+
+fn image_data_uri(mime: &str, data: &str) -> Result<String, &'static str> {
     if data.is_empty() || data.len() >= MAX_IMAGE_BASE64 {
-        return Some("No usable image was returned. Your text draft is still available.");
+        return Err("No usable image was returned. Your text draft is still available.");
     }
-    if !mime.is_empty() && !mime.eq_ignore_ascii_case("image/png") {
-        return Some(
-            "Gemini returned an image that is not PNG. Your text draft is still available.",
-        );
-    }
-    if !is_standard_base64(data) || !data.starts_with("iVBORw0KGgo") {
-        return Some("Invalid image response.");
-    }
-    None
+    let header = decoded_image_header(data).ok_or("Invalid image response.")?;
+    let media_type = match mime.trim().to_ascii_lowercase().as_str() {
+        "image/png" if is_png_header(&header) => "image/png",
+        "image/jpeg" | "image/jpg" if is_jpeg_header(&header) => "image/jpeg",
+        "" if is_png_header(&header) => "image/png",
+        "" if is_jpeg_header(&header) => "image/jpeg",
+        "image/png" | "image/jpeg" | "image/jpg" | "" => return Err("Invalid image response."),
+        _ => return Err(
+            "Gemini returned an image NotePaeds cannot use. Your text draft is still available.",
+        ),
+    };
+    Ok(format!("data:{media_type};base64,{data}"))
 }
 
 fn inline_image<'a>(part: &'a Value) -> Option<(&'a str, &'a str)> {
@@ -502,10 +557,7 @@ fn parse_image_response(data: &Value) -> Result<String, String> {
                 let Some((mime, image)) = inline_image(part) else {
                     continue;
                 };
-                if let Some(error) = png_base64_error(mime, image) {
-                    return Err(error.into());
-                }
-                return Ok(format!("data:image/png;base64,{image}"));
+                return image_data_uri(mime, image).map_err(str::to_owned);
             }
             Err("No usable image was returned. Your text draft is still available.".into())
         }
@@ -796,13 +848,38 @@ mod tests {
         assert!(parse_image_response(&snake)
             .unwrap()
             .starts_with("data:image/png;base64,"));
+        let jpeg_bytes = "/9j/4AAQSkZJRg==";
         let jpeg = json!({
             "candidates": [{
                 "finishReason": "STOP",
-                "content": {"parts": [{"inlineData": {"mimeType": "image/jpeg", "data": "/9j/4AAQSkZJRg=="}}]}
+                "content": {"parts": [{"inlineData": {"mimeType": "image/jpeg", "data": jpeg_bytes}}]}
             }]
         });
-        assert!(parse_image_response(&jpeg).unwrap_err().contains("not PNG"));
+        assert_eq!(
+            parse_image_response(&jpeg).unwrap(),
+            format!("data:image/jpeg;base64,{jpeg_bytes}")
+        );
+        assert!(is_jpeg_header(&decoded_image_header(jpeg_bytes).unwrap()));
+        assert!(is_png_header(&decoded_image_header(png).unwrap()));
+        let mismatched = json!({
+            "candidates": [{
+                "finishReason": "STOP",
+                "content": {"parts": [{"inlineData": {"mimeType": "image/png", "data": jpeg_bytes}}]}
+            }]
+        });
+        assert_eq!(
+            parse_image_response(&mismatched).unwrap_err(),
+            "Invalid image response."
+        );
+        let gif = json!({
+            "candidates": [{
+                "finishReason": "STOP",
+                "content": {"parts": [{"inlineData": {"mimeType": "image/gif", "data": "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}}]}
+            }]
+        });
+        assert!(parse_image_response(&gif)
+            .unwrap_err()
+            .contains("cannot use"));
         let garbage = json!({
             "candidates": [{
                 "finishReason": "STOP",
@@ -825,9 +902,14 @@ mod tests {
             "No usable image was returned. Your text draft is still available."
         );
         assert_eq!(MAX_IMAGE_BASE64, 30_000_000);
-        assert!(png_base64_error("image/png", "")
-            .unwrap()
+        assert!(image_data_uri("image/png", "")
+            .unwrap_err()
             .contains("No usable image"));
-        assert!(png_base64_error("image/png", png).is_none());
+        assert!(image_data_uri("image/png", png)
+            .unwrap()
+            .starts_with("data:image/png;base64,"));
+        assert!(image_data_uri("image/jpeg", jpeg_bytes)
+            .unwrap()
+            .starts_with("data:image/jpeg;base64,"));
     }
 }

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const vm = require('vm');
 const root = path.join(__dirname, '..');
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
@@ -25,6 +26,15 @@ assert(html.includes('I reviewed this text and agree to send it and the appearan
 assert(html.includes('Google Gemini API key'));
 assert(html.includes('Enter a Google Gemini API key from Google AI Studio.'));
 assert(html.includes('AI search requires a configured Google Gemini API key and consent.'));
+assert(html.includes('>Save image</button>'));
+assert(html.includes('id="leafletPrint">Print image</button>'));
+assert(!html.includes('>Save PNG</button>'));
+
+const uiSource = read('generation-ui.js');
+const fileNameFn = uiSource.match(/function leafletFileName\(uri\)\{.*\}/)[0];
+const names = vm.runInNewContext(fileNameFn + '\n({png:leafletFileName("data:image/png;base64,abc"),jpeg:leafletFileName("data:image/jpeg;base64,abc")})');
+assert.equal(names.png, 'NotePaeds-discharge-leaflet-draft.png');
+assert.equal(names.jpeg, 'NotePaeds-discharge-leaflet-draft.jpg');
 
 const generation = read('src-tauri/src/generation.rs');
 assert(!/openai|gpt-4|gpt-image|bearer_auth|OPENAI/i.test(generation));
