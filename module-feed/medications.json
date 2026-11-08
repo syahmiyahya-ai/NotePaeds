@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "moduleVersion": "1.1.0",
+  "moduleVersion": "1.1.1",
   "kind": "medications",
   "entries": [
     {
@@ -3129,6 +3129,33 @@
       "revision": "Local protocol entry — 26 September 2026",
       "calcPerKg": null,
       "frequency": "times three every 20 minutes",
+      "enabled": true
+    },
+    {
+      "id": "med_diphenhydramine_hcl_historical_moh_2015",
+      "name": "Diphenhydramine Hydrochloride",
+      "type": "Syr",
+      "orderPrefix": "Syr",
+      "otherName": "Diphenhydramine HCl",
+      "route": "Oral",
+      "text": "Syr Diphenhydramine HCl 10mg/5mL — AGE-BASED HISTORICAL MOH REGIMEN; verify current HTA/KKM approval, age and selected dose before prescribing",
+      "category": "First-Generation Sedating Antihistamine",
+      "indication": "Allergic rhinitis; symptomatic relief of allergic reactions / urticaria",
+      "targetAge": "Historical MOH regimen from 1 year; current local approval must be verified",
+      "formulations": "Syr 10mg/5mL (2mg/mL) — historical MOH oral solution. Exclude combination cough/expectorant preparations.",
+      "dose": "Age-based; NOT mg/kg. Do not auto-calculate from weight alone.",
+      "maxSingle": "Historical MOH: 1-<6yr 5mg; 6-12yr 10mg; >12yr 50mg (verify local approval)",
+      "maxDaily": "Historical MOH QID-derived regimen totals, NOT universal safety ceilings: 1-<6yr 20mg/day; 6-12yr 40mg/day; >12yr 200mg/day",
+      "toxicLimit": "Acute ingestion: children <6yr >=7.5mg/kg; >=6yr >=7.5mg/kg OR >=300mg (whichever lower) warrants ED referral. Assess symptomatic or intentional ingestion regardless of dose.",
+      "duration": "Short-term only, based on response; reassess persistent symptoms. No fixed evidence-based course.",
+      "administration": "PO TDS-QID (~6-8 hourly) in historical MOH allergic rhinitis regimen. Verify age/product approval. Avoid duplicate antihistamines, sedatives and anticholinergics; not for inducing sleep.",
+      "weightBands": "AGE-BASED, NOT WEIGHT-BASED; historical MOH 2mg/mL: 1-<6yr 5mg (2.5mL) TDS-QID; 6-12yr 10mg (5mL) TDS-QID; >12yr 25-50mg (12.5-25mL) TDS-QID. Apply only if locally approved.",
+      "organRisk": "CNS sedation or paradoxical excitation; anticholinergic toxicity, delirium, hyperthermia, urinary retention, seizures, QRS widening, QT prolongation, ventricular arrhythmias and cardiovascular collapse in severe overdose.",
+      "warnings": "Prefer second-generation non-sedating antihistamines for routine allergic rhinitis/urticaria. Avoid routine use in infants/young children without explicit local approval; not for routine cough/cold in children <2yr. Caution in respiratory compromise, seizures, glaucoma, urinary retention and conduction disease. NOT a substitute for IM adrenaline in anaphylaxis.",
+      "emergency": "ABCDE; assess airway, GCS, glucose, temperature and ECG. Continuous ECG monitoring for significant toxicity. Benzodiazepines for seizures/agitation. IV sodium bicarbonate for QRS widening/sodium-channel blockade with toxicology advice. Selected early activated charcoal only with protected airway. Physostigmine only after toxicology consultation in selected pure anticholinergic toxicity; avoid with QRS widening/mixed overdose. Supportive care and poison centre consultation.",
+      "revision": "Historical MOH Formulary Verified (2015) — per supplied record; current HTA/KKM Formulary Approval Pending",
+      "frequency": "TDS-QID (historical; manually verify)",
+      "calcPerKg": null,
       "enabled": true
     }
   ]
