@@ -1,4 +1,6 @@
-// DPAPI protects the saved key for this Windows account. No secret enters exports.
+// DPAPI protects the saved Gemini key for this Windows account. No secret enters exports.
+// The previous value name is not read, so a key saved by an older build is ignored.
+pub const REGISTRY_VALUE: &str = "GeminiApiKey";
 #[cfg(windows)]
 mod platform {
     use std::ffi::c_void;
@@ -15,12 +17,21 @@ mod platform {
         let result=unsafe{std::slice::from_raw_parts(output.data,output.len as usize).to_vec()};unsafe{LocalFree(output.data as *mut c_void)};Ok(result)
     }
     fn registry()->Result<winreg::RegKey,String>{winreg::RegKey::predef(winreg::enums::HKEY_CURRENT_USER).create_subkey("Software\\NotePaeds\\AI").map(|x|x.0).map_err(|_|"Cannot open the Windows key store.".into())}
-    pub fn save(key:&str)->Result<(),String>{let encrypted=crypt(key.as_bytes(),true)?;registry()?.set_raw_value("ApiKey",&winreg::RegValue{bytes:encrypted,vtype:winreg::enums::REG_BINARY}).map_err(|_|"Cannot save the encrypted key.".into())}
-    pub fn load()->Result<Option<String>,String>{let reg=registry()?;match reg.get_raw_value("ApiKey"){Ok(v)=>{if v.bytes.is_empty(){return Ok(Some(String::new()))}String::from_utf8(crypt(&v.bytes,false)?).map(Some).map_err(|_|"The saved key is damaged. Enter it again.".into())},Err(e) if e.kind()==std::io::ErrorKind::NotFound=>Ok(None),Err(_)=>Err("Cannot read the saved key.".into())}}
-    pub fn remove()->Result<(),String>{registry()?.set_raw_value("ApiKey",&winreg::RegValue{bytes:vec![],vtype:winreg::enums::REG_BINARY}).map_err(|_|"Cannot remove the saved key.".into())}
+    pub fn save(key:&str)->Result<(),String>{let encrypted=crypt(key.as_bytes(),true)?;registry()?.set_raw_value(super::REGISTRY_VALUE,&winreg::RegValue{bytes:encrypted,vtype:winreg::enums::REG_BINARY}).map_err(|_|"Cannot save the encrypted key.".into())}
+    pub fn load()->Result<Option<String>,String>{let reg=registry()?;match reg.get_raw_value(super::REGISTRY_VALUE){Ok(v)=>{if v.bytes.is_empty(){return Ok(Some(String::new()))}String::from_utf8(crypt(&v.bytes,false)?).map(Some).map_err(|_|"The saved key is damaged. Enter it again.".into())},Err(e) if e.kind()==std::io::ErrorKind::NotFound=>Ok(None),Err(_)=>Err("Cannot read the saved key.".into())}}
+    pub fn remove()->Result<(),String>{registry()?.set_raw_value(super::REGISTRY_VALUE,&winreg::RegValue{bytes:vec![],vtype:winreg::enums::REG_BINARY}).map_err(|_|"Cannot remove the saved key.".into())}
     #[cfg(test)] mod tests {#[test]fn encrypted_roundtrip(){let value=b"synthetic-test-value";let encrypted=super::crypt(value,true).unwrap();assert_ne!(&encrypted,value);assert_eq!(super::crypt(&encrypted,false).unwrap(),value);}}
 }
 #[cfg(windows)] pub use platform::{save,load,remove};
 #[cfg(not(windows))] pub fn save(_: &str)->Result<(),String>{Err("Secure key storage requires Windows.".into())}
 #[cfg(not(windows))] pub fn load()->Result<Option<String>,String>{Ok(None)}
 #[cfg(not(windows))] pub fn remove()->Result<(),String>{Ok(())}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn saved_value_is_not_the_previous_provider_slot() {
+        assert_eq!(super::REGISTRY_VALUE, "GeminiApiKey");
+        assert_ne!(super::REGISTRY_VALUE, "ApiKey");
+    }
+}

@@ -21,7 +21,7 @@ function insertIntoPlaceholders(text,kind){const p=active(),result=placeholderRe
 function insertParsedPatientId(text){if(!insertIntoPlaceholders(text,'id')){insertText(text);toast('Patient details inserted at cursor; no matching placeholder found.')}}
 async function aiIcdPanel(){
   const invoke=window.__TAURI__?.core?.invoke;
-  openDialog('AI ICD-10 check','<div class="tiny">Review the diagnosis only. Remove names and identifiers. Suggestions need clinician review.</div><textarea id="aiIcdInput" class="area"></textarea><label><input id="aiIcdConsent" type="checkbox"> Send this diagnosis text to OpenAI for coding suggestions</label><pre id="aiIcdResult" class="preview" style="white-space:pre-wrap"></pre>',[{label:'Close'},{label:'Check diagnosis',close:false,primary:true,fn:async()=>{
+  openDialog('AI ICD-10 check','<div class="tiny">Review the diagnosis only. Remove names and identifiers. Suggestions need clinician review.</div><textarea id="aiIcdInput" class="area"></textarea><label><input id="aiIcdConsent" type="checkbox"> Send this diagnosis text to Google Gemini for coding suggestions</label><pre id="aiIcdResult" class="preview" style="white-space:pre-wrap"></pre>',[{label:'Close'},{label:'Check diagnosis',close:false,primary:true,fn:async()=>{
     const input=$('#aiIcdInput'),output=$('#aiIcdResult'),button=$$('#dialogFoot .btn')[1];
     if(!invoke)return toast('AI coding requires the Windows desktop app.');
     if(!$('#aiIcdConsent').checked)return toast('Review and approve the diagnosis text first.');
