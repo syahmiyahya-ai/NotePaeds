@@ -1,4 +1,4 @@
-# NotePaeds 9.3.5
+# NotePaeds 9.3.6
 
 Quick start now has an Apple-inspired setup-assistant layout, chapter sidebar, soft illustrations, rounded practice cards and reduced-motion support.
 
@@ -20,7 +20,7 @@ The main window remains a compact Notepad-style editor. Search, medication and I
 
 ## Upgrade
 
-Export your current shift and clinical library, close the old application, and extract the entire ZIP into a new folder. Keep the modules folder beside NotePaeds.exe. Import your saved clinical library into the new copy if you have custom entries. Keep your old folder until you have checked your notes and custom library. This 9.3.5 package is a manual download; automatic availability depends on publication of the signed update feed.
+Export your current shift and clinical library, close the old application, and extract the entire ZIP into a new folder. Keep the modules folder beside NotePaeds.exe. Import your saved clinical library into the new copy if you have custom entries. Keep your old folder until you have checked your notes and custom library. This 9.3.6 package is a manual download; automatic availability depends on publication of the signed update feed.
 
 Windows x64 and WebView2 are required. If a shared or protected folder blocks replacement, the updater keeps the verified download and displays its location for manual replacement. Notes stay in the existing local WebView profile; they are not encrypted by this release. API keys are encrypted separately.
 
@@ -45,3 +45,10 @@ AI and GitHub publication were checked with simulated responses; no paid AI requ
 
 ## New in 9.3.5
 F5: expanded local blood investigation parser with editable preview. Ctrl+Shift+A: active patient alarm. Supports RP, LFT, CRP, minerals, troponin and additional labelled tests alongside two-line FBC. Review all extracted results before insertion. Conflicting readings are flagged, not silently selected.
+
+## New in 9.3.6
+Publishing the library keeps the duration on a saved fluid regimen (PR #1).
+The vitals parser reads a blood pressure written as BP x/y and an oxygen saturation written as sats N (PR #2).
+Quick export and Save Shift As save into one shared shift folder setting (PR #3).
+All AI features now use Google Gemini instead of OpenAI. The key is saved in AI connection. Use Test connection after upgrading. The Gemini connection has not been tested against Google yet (PR #4).
+Diphenhydramine is a historical MOH reference with a local approval warning and no auto-dosing. The medication feed manifest is 1.1.1 (commits cf28402, ff35b2d and fa9a2be).
